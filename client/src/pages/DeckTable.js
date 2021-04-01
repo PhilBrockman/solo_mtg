@@ -1,18 +1,75 @@
 import React from 'react'
 import { useTable } from 'react-table'
+import styled from 'styled-components'
 
-export const MTGTable = (props) => {
-    const data = React.useMemo(() => props.data, [props])
+const Update = styled.div`
+    color: #ef9b0f;
+    cursor: pointer;
+    `
+
+const Delete = styled.div`
+    color: #ff0000;
+    cursor: pointer
+    `
+
+const UpdatePlayingCard = (props) => {
+  console.log("updaitgn playnig cards props", props)
+  const updatePlayingCard = event => {
+      event.preventDefault()
+      window.location.href = `/playingCards/update/${props.row.original._id}`
+
+  }
+
+  return <Update onClick={updatePlayingCard}>Update</Update>
+}
+
+// class DeleteMovie extends Component {
+//     deleteUser = event => {
+//         event.preventDefault()
+
+//         if (
+//             window.confirm(
+//                 `Do tou want to delete the movie ${this.props.id} permanently?`,
+//             )
+//         ) {
+//             api.deleteMovieById(this.props.id)
+//             window.location.reload()
+//         }
+//     }
+
+//     render() {
+//         return <Delete onClick={this.deleteUser}>Delete</Delete>
+//     }
+// }
+  
+const DeckTable = (props) => {
+  const [data, setData] = React.useState(React.useMemo(() => props.data, []));
+
     const columns = React.useMemo(() => [
-        {
-          Header: 'Name',
-          accessor: 'name', 
-        },
-        {
-          Header: 'Quantity',
-          accessor: 'quantity',
-        },
-      ], [])
+      { 
+        Header: "cards",
+        columns: [
+          {
+            Header: 'Name',
+            accessor: 'name', 
+          },
+          {
+            Header: 'Quantity',
+            accessor: 'quantity',
+          }, 
+        ],
+      },
+      {
+        Header: "",
+        id: "delete",
+        accessor: (str) => "delete",
+
+        Cell: (tableProps) => (
+          <UpdatePlayingCard 
+            {...tableProps}
+          />
+        )
+      }], [data])
     
     const {
     getTableProps,
@@ -76,3 +133,5 @@ export const MTGTable = (props) => {
         )
     }
 }
+
+export default DeckTable
