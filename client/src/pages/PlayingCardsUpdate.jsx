@@ -1,9 +1,7 @@
 import React from 'react'
 import api from '../api'
-import styled from 'styled-components'
 import {useForm, PlayingCardShard} from './_form.js'
 import * as Magic from "mtgsdk";
-import { card } from 'mtgsdk';
 
 const getRulesText = (name) => {
    return Magic.card.where({name:`"${name}"`})
@@ -31,7 +29,7 @@ const PlayingCardsUpdate = (props) => {
             }
             
         })
-    },[])
+    },[_id])
     
     if(values){
         console.log("loaded:", values)
@@ -54,7 +52,7 @@ const UpdateValues = (props) => {
     const handleUpdatePlayingCard = async (payload) => {
         console.log('updating payload',props.id,  payload)
         await api.updatePlayingCardById(props.id, payload).then(res => {
-            
+            window.location.href = "/playingCards/list"
         })
     }
 

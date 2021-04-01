@@ -1,8 +1,5 @@
-import e from 'cors';
-import { Legality } from 'mtgsdk-ts/out/IMagic';
 import React from 'react'
 import styled from 'styled-components'
-import api from '../api'
 
 
 export const initialForm = {

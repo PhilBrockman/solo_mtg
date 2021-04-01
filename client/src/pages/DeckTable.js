@@ -1,6 +1,7 @@
 import React from 'react'
 import { useTable } from 'react-table'
 import styled from 'styled-components'
+import api from '../api'
 
 const Update = styled.div`
     color: #ef9b0f;
@@ -13,7 +14,6 @@ const Delete = styled.div`
     `
 
 const UpdatePlayingCard = (props) => {
-  console.log("updaitgn playnig cards props", props)
   const updatePlayingCard = event => {
       event.preventDefault()
       window.location.href = `/playingCards/update/${props.row.original._id}`
@@ -23,27 +23,21 @@ const UpdatePlayingCard = (props) => {
   return <Update onClick={updatePlayingCard}>Update</Update>
 }
 
-// class DeleteMovie extends Component {
-//     deleteUser = event => {
-//         event.preventDefault()
-
-//         if (
-//             window.confirm(
-//                 `Do tou want to delete the movie ${this.props.id} permanently?`,
-//             )
-//         ) {
-//             api.deleteMovieById(this.props.id)
-//             window.location.reload()
-//         }
-//     }
-
-//     render() {
-//         return <Delete onClick={this.deleteUser}>Delete</Delete>
-//     }
-// }
+const DeletePlayingCard = props => {
+    const deleteCard = event => {
+        event.preventDefault()
+        if (window.confirm(
+            `Do you want to remove ${props.row.original.name}?`,
+            )) {
+              api.deletePlayingCardById(props.row.original._id)
+              window.location.reload()
+        }
+      }
+    return <Delete onClick={deleteCard}>Delete</Delete>
+}
   
 const DeckTable = (props) => {
-  const [data, setData] = React.useState(React.useMemo(() => props.data, []));
+  const data = React.useMemo(() => props.data, [props.data]);
 
     const columns = React.useMemo(() => [
       { 
@@ -69,15 +63,27 @@ const DeckTable = (props) => {
       },
       {
         Header: "",
-        id: "delete",
-        accessor: (str) => "delete",
+        id: "update",
+        accessor: (str) => "udate",
 
         Cell: (tableProps) => (
           <UpdatePlayingCard 
             {...tableProps}
           />
         )
-      }], [data])
+      },
+      {
+        Header: "",
+        id: "delete",
+        accessor: (str) => "delete",
+
+        Cell: (tableProps) => (
+          <DeletePlayingCard 
+            {...tableProps}
+          />
+        )
+      },
+    ], [])
     
     const {
     getTableProps,

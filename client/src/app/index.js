@@ -4,6 +4,8 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import { NavBar } from '../components'
 import { PlayingCardsList, PlayingCardsInsert, PlayingCardsUpdate } from '../pages'
 
+import {Game} from "./Game.jsx"
+
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 
@@ -12,6 +14,7 @@ function App() {
         <Router>
             <NavBar />
             <Switch>
+                <Route path="/playingCards" exact component={Game} />
                 <Route path="/playingCards/list" exact component={PlayingCardsList} />
                 <Route path="/playingCards/create" exact component={PlayingCardsInsert} />
                 <Route
