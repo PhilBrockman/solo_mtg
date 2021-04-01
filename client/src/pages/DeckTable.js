@@ -57,6 +57,10 @@ const DeckTable = (props) => {
             Header: 'Quantity',
             accessor: 'quantity',
           }, 
+          {
+            Header: 'img',
+            accessor: 'img',
+          }, 
         ],
       },
       {

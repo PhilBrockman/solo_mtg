@@ -52,8 +52,11 @@ updatePlayingCard = async (req, res) => {
             })
         }
         playingCard.name = body.name
-        playingCard.time = body.time
-        playingCard.rating = body.rating
+        playingCard.quantity = body.quantity
+        playingCard.rulesText = body.rulesText
+        playingCard.img = body.img
+        playingCard.token = body.token
+
         playingCard
             .save()
             .then(() => {
