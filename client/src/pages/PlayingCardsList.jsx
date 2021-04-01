@@ -15,12 +15,11 @@ const PlayingCardsList = () => {
         console.log("running effect")
         api.getAllPlayingCards().then(playingCards => {
             setPlayingCards(playingCards)
-            console.log('TCL: PlayingCardsList -> render -> playingCards', playingCards)
+            console.log('Pages: PlayingCardsList -> render -> playingCards', playingCards)
         })
        }, []);
 
-    console.log('playingCards', playingCards)
-   if(playingCards?.data?.data){
+   if(playingCards){
         return (
         <Wrapper>
             <MTGTable 
