@@ -3,14 +3,11 @@ import api from '../api'
 import styled from 'styled-components'
 import {useForm, PlayingCardShard} from './_form.js'
 import * as Magic from "mtgsdk";
+import { card } from 'mtgsdk';
 
-// Magic.card.find(3)
-// .then(result => {
-//     console.log(result.card.name) // "Black Lotus"
-// })
-
-
-
+const getRulesText = (name) => {
+   return Magic.card.where({name:`"${name}"`})
+}
 
 const PlayingCardsUpdate = (props) => {
     const [values, setValues] = React.useState(null)
@@ -18,7 +15,21 @@ const PlayingCardsUpdate = (props) => {
 
     React.useEffect(()=>{
         api.getPlayingCardById(_id).then(res => {
-            setValues(res.data.data)
+            const card = res.data.data
+            if(!(card.rulesText) || card.rulesText.length === 0){
+                getRulesText(card.name).then(text => {
+                    if(text.length > 0){
+                        card.rulesText = text[0].text
+                        console.log("text:", card.rulesText)
+                        setValues(card)
+                    } else {
+                        setValues(card)
+                    }
+                })
+            } else {
+                setValues(card)
+            }
+            
         })
     },[])
     
@@ -43,9 +54,11 @@ const UpdateValues = (props) => {
     const handleUpdatePlayingCard = async (payload) => {
         console.log('updating payload',props.id,  payload)
         await api.updatePlayingCardById(props.id, payload).then(res => {
-            window.alert(`Movie updated successfully`)
+            
         })
     }
+
+    console.log(getRulesText(state.name))
 
     return (
         <PlayingCardShard

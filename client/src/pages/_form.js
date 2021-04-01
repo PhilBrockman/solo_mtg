@@ -62,7 +62,7 @@ export const PlayingCardShard = props => {
               }
             })
           }
-          <Button>Submit</Button> <CancelButton>Cancel</CancelButton>
+          <Button>Submit</Button> <CancelButton  href={'/playingCards/list'}>Cancel</CancelButton>
         </form>
       </Wrapper>
     );
