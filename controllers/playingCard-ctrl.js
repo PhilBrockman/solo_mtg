@@ -52,9 +52,8 @@ updatePlayingCard = async (req, res) => {
             })
         }
         playingCard.name = body.name
-        playingCard.quantity = body.quantity
         playingCard.rulesText = body.rulesText
-        playingCard.img = body.img
+        playingCard.url = body.url
         playingCard.token = body.token
 
         playingCard
