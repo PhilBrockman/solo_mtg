@@ -44,24 +44,28 @@ const FetchMTGData = props => {
 
 const PlayingCardsInsert = props => {
   const removal_id = "remove-"+props.initialValues.name
+  const {state, submitHandler, changeHandler} = useForm(props.initialValues, values => handleCreatePlayingCard(values));
 
   const handleCreatePlayingCard = async (payload) => {
     await api.insertPlayingCard(payload).then(res => {
-      document.getElementById(removal_id).remove()
+      document.getElementById(removal_id)?.remove()
     })
   }
 
-  const {state, submitHandler, changeHandler} = useForm(props.initialValues, values => handleCreatePlayingCard(values));
-
-  return (
-    <div id={removal_id}>
-      <PlayingCardShard
-          state={state}
-          submitHandler={submitHandler}
-          changeHandler={changeHandler}
-          />
-    </div>
-  ); 
+  if(props.initialValues.text?.length === 0 || props.initialValues?.url.length === 0){
+    return (
+      <div id={removal_id}>
+        <PlayingCardShard
+            state={state}
+            submitHandler={submitHandler}
+            changeHandler={changeHandler}
+            />
+      </div>
+    ); 
+  } else {
+    handleCreatePlayingCard(props.initialValues)
+    return <div id={removal_id}> loaded {props.initialValues.name} </div>
+  }
 }
 
 export const CardsNotFound = props => {
