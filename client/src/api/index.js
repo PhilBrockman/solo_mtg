@@ -1,5 +1,10 @@
 import axios from 'axios'
 import React from 'react'
+import * as Magic from "mtgsdk";
+
+export const getMTGCardByName= (name) => {
+  return Magic.card.where({name:`"${name}"`})
+}
 
 const api = axios.create({
     baseURL: 'http://localhost:3000/api',
@@ -19,14 +24,15 @@ const apis = {
     getPlayingCardById,
 }
 
-export function useAPI(call) {
+export function useAPI(callback, args) {
   const [result, setResult] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
     async function callAsynch() {
       try {
-        call([...arguments].splice(1)).then(res => {
+        console.log("args", [...arguments].splice(1))
+        callback(args).then(res => {
           setResult(
             res.data.data
           );
@@ -39,7 +45,7 @@ export function useAPI(call) {
     }
 
     callAsynch();    
-  }, [call]);
+  }, [callback]);
 
   return [result, loading];
 }

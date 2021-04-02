@@ -39,8 +39,8 @@ export const PlayingCardShard = props => {
       <Widget.Wrapper>
         <form onSubmit={props.submitHandler}>
           { Object.keys(initialForm).map((key) => {
+              console.log("key:", key)
               if(initialForm.hasOwnProperty(key)){
-                console.log("key:", key)
                 return(
                   <div key={key}>
                     <Widget.Label>{initialForm[key].label}</Widget.Label>
@@ -57,7 +57,7 @@ export const PlayingCardShard = props => {
               }
             })
           }
-          <Widget.Button>Submit</Widget.Button> <Widget.CancelButton  href={'/playingCards/list'}>Cancel</Widget.CancelButton>
+          <Widget.Button>Submit</Widget.Button>
         </form>
       </Widget.Wrapper>
     );

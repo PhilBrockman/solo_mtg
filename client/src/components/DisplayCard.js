@@ -1,12 +1,6 @@
-import * as Magic from "mtgsdk";
 import React from 'react'
-import api, { useAPI } from "../api";
+import api, { useAPI, getMTGCardByName } from "../api";
 import "./playingCardDisplay.css"
-
-
-const getMTGCard= (name) => {
-  return Magic.card.where({name:`"${name}"`})
-}
 
 const DisplayMTGCard = props => {
   return <img className="list-display" src={props.src} />
@@ -26,12 +20,12 @@ const ImageFetcher = props => {
 }
 
 export const DisplayCard = props => {
-  let original = props.row.original
+  let original = props.original || props.row.original
   const [display, setDisplay] = React.useState(original.url)
   const [rulesText, setRulesText] = React.useState(original.rulesText)
 
   if(!original.url || original.url.length === 0){
-    getMTGCard(original.name).then(cards => {
+    getMTGCardByName(original.name).then(cards => {
       console.log("found some", original.name, cards)
       let filtered = cards.filter(item => item.hasOwnProperty("imageUrl"))
       console.log("filtered down to", filtered)

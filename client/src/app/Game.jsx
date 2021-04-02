@@ -1,7 +1,8 @@
-import { json } from 'body-parser'
 import React from 'react'
-import api, {useAPI} from "../api"
-import {useForm, PlayingCardShard} from "../pages/_form.js"
+import api, {useAPI, getMTGCardByName} from "../api"
+import {useForm, PlayingCardShard, initialForm} from "../pages/_form.js"
+import {PlayingCardsUpdate} from "../pages"
+import {DisplayCard} from "../components"
 
 class Deck {
   constructor(decklist) {
@@ -44,47 +45,79 @@ class Deck {
   }
 }
 
-const PlayingCardsInsert = props => {
-  console.log("props", props)
+const FetchMTGData = props => {
+  const [gatherer, setGatherer] = React.useState(null)
+  const [initialValues, setInitialValues] = React.useState({
+    name: props.name, rulesText: '', url: ''
+  })
 
+  React.useEffect(() => {
+    getMTGCardByName(props.name).then((res, err )=> {
+      if(err){
+        console.error(err)
+      }
+
+      res = res.filter(card => card.hasOwnProperty("imageUrl"))
+
+      if(res.length === 0){
+        console.log("no cards found with name", props.name)
+        setGatherer(true)
+      } else {
+        console.log("res", res)
+        setGatherer(res[0])
+      }
+  })}, [props.name])
+
+  if(gatherer){
+    console.log('gatherer', gatherer)
+    let tmp = {}
+        tmp.name = props.name;
+        tmp.rulesText = gatherer.text;
+        tmp.url = gatherer.imageUrl;
+    console.log("calling with ", {...tmp})
+    return <PlayingCardsInsert
+              initialValues={tmp}/>
+  } else {
+    console.log("gathering magicks")
+    return <>gathering... {props.name}</>
+  }
+}
+
+const PlayingCardsInsert = props => {
   const handleCreatePlayingCard = async (payload) => {
     await api.insertPlayingCard(payload).then(res => {
-      window.location.reload()
+      return;
     })
   }
 
-  const {state, submitHandler, changeHandler} = useForm(props.startingValues, values => handleCreatePlayingCard(values));
+  const {state, submitHandler, changeHandler} = useForm(props.initialValues, values => handleCreatePlayingCard(values));
 
+  console.log("gatherer")
   return (
-    <PlayingCardShard
-      state={state}
-      submitHandler={submitHandler}
-      changeHandler={changeHandler}
-      />
+      <PlayingCardShard
+          state={state}
+          submitHandler={submitHandler}
+          changeHandler={changeHandler}
+          />
   ); 
-  
 }
 
 const CardsNotFound = props => {
   let modified = props.notFound.map(card => {
-    let startingValues
     let candidates = props.allCards.filter(allCards => allCards.name === card)
-    console.log("props", props)
-    console.log('candidates', candidates)
+
     if(candidates.length > 0){
       let lastEl = candidates[candidates.length-1]
-      console.log('lastEl.url', lastEl)
-      startingValues={name:lastEl.name, rulesText:lastEl.rulesText || "", url: lastEl.url || ""}
+      return (<>
+                <DisplayCard original={lastEl}/>
+                <PlayingCardsUpdate
+                  key={card}
+                  directId={ lastEl._id}
+                />
+              </>)
     } else {
-      console.log(" nothing found")
-      startingValues = {name:props.card, rulesText:'', url: ''}
+      return <FetchMTGData key={card} name={card}/>
     }
-
-    return <PlayingCardsInsert
-      key = {card}
-      card = {card}
-      startingValues={startingValues}
-     />
   })
 
   return modified
@@ -99,16 +132,20 @@ export const Game = (props) => {
   }
 
   if(loading === false){
-    let storedCards = cards.filter(card => card.url?.length > 0 || card.rulesText?.length > 0)
-    let uniqueCards = deck.split("\n").map(card => card.split(" ").splice(1).join(" "))
-    let found = uniqueCards.filter(card => storedCards.map(card => card.name).includes(card))
-    let notFound = uniqueCards.filter(card => !storedCards.map(card => card.name).includes(card))
-
+    let allCards = cards 
     let totalCards = deck.split("\n").map(card => parseInt(card.split(" ")[0])).reduce((a, b) => a + b)
+    let validStoredCards = cards.filter(card => card.url?.length > 0 || card.rulesText?.length > 0)
+
+    let requestedCards = deck.split("\n").map(card => card.split(" ").splice(1).join(" "))
+    let found = requestedCards.filter(card => validStoredCards.map(card => card.name).includes(card))
+
+    let notFound = requestedCards.filter(card => !validStoredCards.map(card => card.name).includes(card))
+    
     return  <>
               <textarea value={deck} onChange={handleChange}/>
-              <>Deck Size: {totalCards}</>
-              <>Loaded: {found.length}</>
+              <div>Deck Size: {totalCards}</div>
+              <div>Loaded: {found.length}</div>
+              <div><button>Load All</button></div>
               <>Not Found: {<CardsNotFound allCards={cards} notFound={notFound} />}</>
             </>
   } else {
@@ -132,7 +169,9 @@ const CardViewer = props => {
 const starting_deck = `1 Yixlid Jailer
 2 Vengeful Dead
 4 Cackling Fiend
-2 Infectious Horror
+2 Infectious Horror`
+
+/*
 2 Severed Legion
 1 Abattoir Ghoul
 2 Nested Ghoul
@@ -158,4 +197,4 @@ const starting_deck = `1 Yixlid Jailer
 1 Forsaken Wastes
 1 Call to the Grave
 55 Zombie Tokens
-5 Zombie Giant Tokens`
+5 Zombie Giant Tokens`*/
