@@ -14,16 +14,16 @@ const FetchMTGData = props => {
     getMTGCardByName(props.name).then((res, err )=> {
       if(err){
         console.error(err)
-      }
-
-      res = res.filter(card => card.hasOwnProperty("imageUrl"))
-
-      if(res.length === 0){
-        console.log("no cards found with name", props.name)
-        setGatherer(true)
       } else {
-        console.log("res", res)
-        setGatherer(res[0])
+        res = res.filter(card => card.hasOwnProperty("imageUrl"))
+
+        if(res.length === 0){
+          console.log("no cards found with name", props.name)
+          setGatherer(true)
+        } else {
+          console.log("res", res)
+          setGatherer(res[0])
+        }
       }
   })}, [props.name])
 
@@ -48,12 +48,13 @@ const PlayingCardsInsert = props => {
 
   const handleCreatePlayingCard = async (payload) => {
     await api.insertPlayingCard(payload).then(res => {
-      document.getElementById(removal_id)?.remove()
+      let n = document.getElementById(removal_id)
+      if(n) { n.remove()}
     })
   }
-
+  let content = "";
   if(props.initialValues.text?.length === 0 || props.initialValues?.url.length === 0){
-    return (
+    content= (
       <div id={removal_id}>
         <PlayingCardShard
             state={state}
@@ -64,8 +65,10 @@ const PlayingCardsInsert = props => {
     ); 
   } else {
     handleCreatePlayingCard(props.initialValues)
-    return <div id={removal_id}> loaded {props.initialValues.name} </div>
+    content = <>loading {props.initialValues.name}</> 
   }
+
+  return <div>{content}</div>
 }
 
 export const CardsNotFound = props => {

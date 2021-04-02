@@ -51,7 +51,7 @@ export const DisplayCard = props => {
       return <DisplayMTGCard src={display} />
     }
   } else {
-    return <>{display}</>
+    return <>add image</>
   }
   
 

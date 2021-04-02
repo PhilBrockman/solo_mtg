@@ -1,12 +1,12 @@
 .battlefield {
   display: flex;
   flex-direction: row-reverse;
-  background-color: purple;
+  flex-wrap: wrap;
 }
 
-.in-play{
-  padding: 10px;
-  background-color: pink;
+.in-play, .in-play img{
+  margin-right: 10px;
+  margin-left: 15px;
   max-width:223px;
   max-height:310px;
 }
