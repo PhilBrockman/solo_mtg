@@ -58,9 +58,14 @@ const DeckTable = (props) => {
             Header: 'url',
             accessor: 'url',
             Cell: (tableProps) => (
-              <DisplayCard
-                {...tableProps}
-              />
+              <>
+                <EditCardAttributeInPlace
+                  {...tableProps}
+                  attr="url"
+                  >
+                  <DisplayCard {...tableProps} />
+                </EditCardAttributeInPlace>
+              </>
             )
           }, 
         ],

@@ -36,7 +36,11 @@ export const EditCardAttributeInPlace = (props) =>{
   if(editing){
     return <EditInPlace initialText={txt} saveChanges={updatePlayingCardAttribute}/>
   } else {
-    return <div className="editable-in-place" onClick={handleClick}>{txt}</div>
+    if(props.children){
+      return <div onClick={handleClick}>{props.children}</div> 
+    } else { //default to text
+      return <div className="editable-in-place" onClick={handleClick}>{txt}</div>
+    }
   } 
 }
 

@@ -1,5 +1,6 @@
 import React from 'react'
-import styled from 'styled-components'
+import * as Widget from "./widgets.js"
+
 
 export const initialForm = {
         name: {
@@ -38,15 +39,15 @@ export const useForm = (initialValues, onSubmit) => {
 
 export const PlayingCardShard = props => {
   return (
-      <Wrapper>
+      <Widget.Wrapper>
         <form onSubmit={props.submitHandler}>
           { Object.keys(initialForm).map((key) => {
               if(initialForm.hasOwnProperty(key)){
                 console.log("key:", key)
                 return(
                   <div key={key}>
-                    <Label>{initialForm[key].label}</Label>
-                      <InputText
+                    <Widget.Label>{initialForm[key].label}</Widget.Label>
+                      <Widget.InputText
                         onChange={props.changeHandler}
                         id={key}
                         value={props.state[key]}
@@ -58,9 +59,9 @@ export const PlayingCardShard = props => {
               }
             })
           }
-          <Button>Submit</Button> <CancelButton  href={'/playingCards/list'}>Cancel</CancelButton>
+          <Widget.Button>Submit</Widget.Button> <Widget.CancelButton  href={'/playingCards/list'}>Cancel</Widget.CancelButton>
         </form>
-      </Wrapper>
+      </Widget.Wrapper>
     );
   
 }
@@ -70,31 +71,3 @@ function formReducer (prevState, {id, value}) {
   newState[id] = value
   return newState;
 };
-
-const Label = styled.label`
-    margin: 5px;
-`
-
-const InputText = styled.input.attrs({
-    className: 'form-control',
-})`
-    margin: 5px;
-`
-
-const Button = styled.button.attrs({
-  className: `btn btn-primary`,
-})`
-  margin: 15px 15px 15px 5px;
-`
-
-const CancelButton = styled.a.attrs({
-  className: `btn btn-danger`,
-})`
-  margin: 15px 15px 15px 5px;
-`
-
-const Wrapper = styled.div.attrs({
-  className: 'form-group',
-})`
-  margin: 0 30px;
-`
