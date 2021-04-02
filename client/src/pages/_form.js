@@ -9,7 +9,7 @@ export const initialForm = {
         rulesText: {
           label: 'Rules Text',
         },
-        img: {
+        url: {
           label: 'The Gatherer Img'
         }
       };
@@ -21,13 +21,12 @@ export const useForm = (initialValues, onSubmit) => {
       console.log('state changed', state)
   }, [state])
 
-  function changeHandler ({target: {value, id}}) {
-    dispatch({id, value})
+  function changeHandler (event) {
+    dispatch( {id: event.target.name, value: event.target.value})
   };
 
   const submitHandler = event => {
     event.preventDefault();
-    console.log('state', state)
     onSubmit(state)
   }
 
@@ -35,6 +34,7 @@ export const useForm = (initialValues, onSubmit) => {
 }
 
 export const PlayingCardShard = props => {
+  console.log("shard", props.state)
   return (
       <Widget.Wrapper>
         <form onSubmit={props.submitHandler}>
@@ -48,6 +48,7 @@ export const PlayingCardShard = props => {
                         onChange={props.changeHandler}
                         key={key}
                         value={props.state[key]}
+                        name={key}
                         />
                     </div>
                   );
@@ -64,6 +65,8 @@ export const PlayingCardShard = props => {
 }
 
 function formReducer (prevState, {id, value}) {
+  console.log("in formReducer", prevState)
+  console.log("updating", id, "to", value)
   const newState = {...prevState}
   newState[id] = value
   return newState;

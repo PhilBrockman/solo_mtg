@@ -7,7 +7,6 @@ import "./pages.css"
 
 import {EditCardAttributeInPlace} from "./EditCardAttributeInPlace"
 
-
 const Delete = styled.div`
     color: #ff0000;
     cursor: pointer

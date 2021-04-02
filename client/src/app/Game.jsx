@@ -53,18 +53,7 @@ const PlayingCardsInsert = props => {
     })
   }
 
-  let startingValues
-  let candidates = props.allCards.filter(card=> card.name === props.card)
-  console.log(props.card)
-  if(candidates.length > 0){
-    console.log('candidates', candidates)
-    startingValues={name:props.card, rulesText:candidates[0].rulesText, img: candidates[0].url}
-  } else {
-    console.log(" nothing found")
-    startingValues = {name:props.card, rulesText:'', img: ''}
-  }
-
-  const {state, submitHandler, changeHandler} = useForm(startingValues, values => handleCreatePlayingCard(values));
+  const {state, submitHandler, changeHandler} = useForm(props.startingValues, values => handleCreatePlayingCard(values));
 
   return (
     <PlayingCardShard
@@ -78,10 +67,23 @@ const PlayingCardsInsert = props => {
 
 const CardsNotFound = props => {
   let modified = props.notFound.map(card => {
+    let startingValues
+    let candidates = props.allCards.filter(allCards => allCards.name === card)
+    console.log("props", props)
+    console.log('candidates', candidates)
+    if(candidates.length > 0){
+      let lastEl = candidates[candidates.length-1]
+      console.log('lastEl.url', lastEl)
+      startingValues={name:lastEl.name, rulesText:lastEl.rulesText || "", url: lastEl.url || ""}
+    } else {
+      console.log(" nothing found")
+      startingValues = {name:props.card, rulesText:'', url: ''}
+    }
+
     return <PlayingCardsInsert
       key = {card}
       card = {card}
-      allCards={props.allCards}
+      startingValues={startingValues}
      />
   })
 
