@@ -1,7 +1,8 @@
 import React from 'react'
 import { useTable } from 'react-table'
 import styled from 'styled-components'
-import api from '../api'
+import api,{useAPI} from '../api'
+import "./pages.css"
 
 const Update = styled.div`
     color: #ef9b0f;
@@ -23,14 +24,65 @@ const UpdatePlayingCard = (props) => {
   return <Update onClick={updatePlayingCard}>Update</Update>
 }
 
-const PlayingCardRulesText = (props) =>{
-  const [editing, setEditing] = React.useState(false)
+const EditCardAttributeInPlace = (props) =>{
+  const attr = props.attr
+  const [editing, setEditing] = React.useState(false);
+  const [txt, setTxt] = React.useState(props.row.original[attr]);
+  
   const handleClick = event => {
-    console.log("toggling editing to true")
     setEditing(true)
+    setEditing(true);
   }
-  return <div onClick={handleClick}>{props.row.original.rulesText}</div>
+
+  const updatePlayingCardAttribute = new_value => {
+    const _id =  props.row.original._id;
+
+    console.log("saving",_id)
+    api.getPlayingCardById(_id).then(old=>{
+      console.log("existing db object:", old[attr])
+      if(old[attr] === new_value){
+        setEditing(false)
+      } else {
+        let data = old.data.data
+        data[attr] = new_value;
+        console.log('new db object', data[attr])
+        api.updatePlayingCardById(_id, data).then(_ => {
+          setEditing(false)
+          setTxt(data[attr])
+        })
+      }
+    })
+  }
+
+
+  if(editing){
+    return <EditInPlace initialText={txt} saveChanges={updatePlayingCardAttribute}/>
+  } else {
+    return <div onClick={handleClick}>{txt}</div>
+  } 
 }
+
+const EditInPlace = props => {
+  const [textAreaValue, setTextAreaValue] = React.useState(props.initialText)
+
+  const handleKeystroke = event => {
+    setTextAreaValue(event.target.value)
+  }
+
+  return <>
+          <textarea 
+            value={textAreaValue}
+            onChange={handleKeystroke}
+            />
+          <SaveButton onClick={(e) => props.saveChanges(textAreaValue)}>Save</SaveButton>
+        </>
+}
+
+const SaveButton = styled.button.attrs({
+  className: `btn btn-success`,
+})`
+  margin: 15px 15px 15px 5px;
+`
 
 const DeletePlayingCard = props => {
     const deleteCard = event => {
@@ -61,14 +113,15 @@ const DeckTable = (props) => {
             accessor: 'rulesText',
 
             Cell: (tableProps) => (
-              <PlayingCardRulesText
+              <EditCardAttributeInPlace
                 {...tableProps}
+                attr="rulesText"
               />
             )
           }, 
           {
-            Header: 'img',
-            accessor: 'img',
+            Header: 'url',
+            accessor: 'url',
           }, 
         ],
       },
