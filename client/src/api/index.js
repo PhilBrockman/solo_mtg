@@ -19,10 +19,39 @@ const apis = {
     getPlayingCardById,
 }
 
-export function useAPI(call){
+export function useAPI(call) {
+  const [result, setResult] = React.useState(null);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    async function fetchAllCards() {
+      try {
+        call().then(res => {
+          setResult(
+            res.data.data
+          );
+          setLoading(false);
+        })
+      } catch (error) {
+        setLoading(null);
+      }
+    }
+
+
+    fetchAllCards();
+    
+  }, []);
+
+  return [result, loading];
+}
+
+export function useAPuuI(call){
     const [data, setData] = React.useState(null)
+
+    console.log("using api")
   
-    call().then(res => {
+    call().resolve().then(res => {
+      console.log("setting data")
       setData(res.data.data)
     })
   

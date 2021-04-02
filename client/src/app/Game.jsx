@@ -4,15 +4,18 @@ import api, {useAPI} from "../api"
 console.log("in game.jsx")
 
 export const Game = (props) => {
-  let cards = useAPI(api.getAllPlayingCards)
-  if(cards && cards.length > 0){
+  let [cards, loading] = useAPI(api.getAllPlayingCards)
+
+  if(loading == false){
+    console.log('cards', cards)
     return cards.map((item, index) =>{
       return( 
-        <CardViewer
-          name={item.name}
-          rulesText={item.rulesText}
-          key={index}
-        />);
+          <CardViewer
+            name={item.name}
+            rulesText={item.rulesText}
+            key={index}
+          />
+        );
     })
   } else {
     return (
