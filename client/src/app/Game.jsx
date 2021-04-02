@@ -2,10 +2,12 @@ import React from 'react'
 import api, {useAPI} from "../api"
 import {CardsNotFound} from "./CardsNotFound.js"
 import {Deck} from "./Deck.js"
+import {startingDeck} from "./StartingDeck.js"
+import {DisplayCard} from "../components"
 
 export const Game = (props) => {
   let [cards, loading] = useAPI(api.getAllPlayingCards)
-  let [deck, setDeck] = React.useState(starting_deck)
+  let [deck, setDeck] = React.useState(startingDeck)
   let [readiedUp, setReadiedUp] = React.useState(false)
 
   const handleChange = event => {
@@ -20,12 +22,13 @@ export const Game = (props) => {
     if(readiedUp){
       return <PlayGame 
                 initialDeck={readiedUp}
+                allCards={cards}
                 />
     } else {
       let totalCards = deck.split("\n").map(card => parseInt(card.split(" ")[0])).reduce((a, b) => a + b)
       let validStoredCards = cards.filter(card => card.url?.length > 0 || card.rulesText?.length > 0)
 
-      let requestedCards = deck.split("\n").map(card => card.split(" ").splice(1).join(" "))
+      let requestedCards = deck.split("\n").map(card => cardName(card))
       let found = deck.split("\n").filter(requested => validStoredCards.map(card => card.name).includes(requested.split(" ").splice(1).join(" ")))
 
       let notFound = requestedCards.filter(card => !validStoredCards.map(card => card.name).includes(card))
@@ -45,8 +48,47 @@ export const Game = (props) => {
   }
 }
 
+const cardName = card => {
+  return card.split(" ").splice(1).join(" ");
+}
+
+const cardCount = card => {
+  return parseInt(card.split(" ")[0]);
+}
+
 const PlayGame = props => {
-  return <>{JSON.stringify(props.initialDeck)}</>
+  const [hordeDeck, setHordeDeck] = React.useState(null)
+
+  React.useEffect(() => {
+    const tmp = props.initialDeck.map(item => {
+      return( 
+        {
+          quantity: cardCount(item),
+          info: props.allCards.filter(
+                  card => cardName(item) == card.name && 
+                    (card.rulesText?.length > 0 || 
+                      card.url?.length > 0))[0]
+        }
+          )
+      }
+    )
+    setHordeDeck(new Deck(tmp))
+  }, [])
+
+  const dealHordeDeck = event => {
+    let newCards = hordeDeck.deal()
+    console.log(newCards)
+    // <DisplayCard />
+  }
+
+  if(hordeDeck){
+    return <>
+            <>{hordeDeck.deck.length} cards</>
+            <button onClick={dealHordeDeck}>Horde Action</button>
+          </>
+  } else {
+    return <>Loading Game</>
+  }
 }
 
 const CardViewer = props => {
@@ -57,34 +99,3 @@ const CardViewer = props => {
     </div>
   )
 }
-
-const starting_deck = `1 Yixlid Jailer
-2 Vengeful Dead
-4 Cackling Fiend
-2 Infectious Horror
-2 Severed Legion
-1 Abattoir Ghoul
-2 Nested Ghoul
-1 Fleshbag Marauder
-1 Gluttonous Zombie
-1 Death Baron
-1 Brain Gorgers
-1 Soulless One
-1 Unbreathing Horde
-1 Waning Wurm
-1 Hollow Dogs
-1 Undead Warchief
-1 Damnation
-1 Festering March
-1 Smallpox
-1 Syphon Mind
-1 Army of the Damned
-1 Twilight's Call
-2 Delirium Skeins
-2 Bad Moon
-3 Grave Peril
-2 Endless Ranks of the Dead
-1 Forsaken Wastes
-1 Call to the Grave
-55 Zombie Tokens
-5 Zombie Giant Tokens`

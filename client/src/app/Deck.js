@@ -4,13 +4,16 @@ export class Deck {
 
     for (let cards in decklist) {
       let card = decklist[cards]
-      let count = parseInt(card.split(" ")[0])
-      let cardName = card.split(" ").splice(1).join(" ")
-      console.log("we found", count, cardName)
+      let count = card.quantity
       for (let i=0; i<count; i++) {
-        this.deck.push(`${cardName}`);
+        card.info.location = "LIBRARY"
+        this.deck.push(card.info);
       }
     }
+
+    console.log("intialized deck", this.deck)
+
+    this.shuffle()
   }
 
   shuffle(){
@@ -33,7 +36,7 @@ export class Deck {
     do{
       next = this.deck.pop()
       out.push(next)
-    }while(next.toLowerCase().includes("token"))
+    }while(next.name.toLowerCase().includes("token"))
 
     return out
   }
