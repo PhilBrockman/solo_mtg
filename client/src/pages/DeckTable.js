@@ -2,11 +2,10 @@ import React from 'react'
 import { useTable } from 'react-table'
 import styled from 'styled-components'
 import api,{useAPI} from '../api'
+import {DisplayCard} from '../components'
 import "./pages.css"
 
 import {EditCardAttributeInPlace} from "./EditCardAttributeInPlace"
-import * as Magic from "mtgsdk";
-
 
 
 const Delete = styled.div`
@@ -25,18 +24,6 @@ const DeletePlayingCard = props => {
         }
       }
     return <Delete onClick={deleteCard}>Delete</Delete>
-}
-
-const getMTGCard= (name) => {
-  return Magic.card.where({name:`"${name}"`})
-}
-
-getMTGCard("Call to the Grave").then(res => {
-  console.log("call to grave", res[0].imageUrl)
-})
-
-const ImageFetcher = props => {
-  return <>data</>
 }
   
 const DeckTable = (props) => {
@@ -71,7 +58,7 @@ const DeckTable = (props) => {
             Header: 'url',
             accessor: 'url',
             Cell: (tableProps) => (
-              <ImageFetcher
+              <DisplayCard
                 {...tableProps}
               />
             )

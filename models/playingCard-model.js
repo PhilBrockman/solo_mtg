@@ -5,6 +5,7 @@ const PlayingCard = new Schema(
     {
         name: { type: String, required: true },
         rulesText: { type: String },
+        url: {type: String}
     },
     { timestamps: true },
 )

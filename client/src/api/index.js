@@ -19,14 +19,14 @@ const apis = {
     getPlayingCardById,
 }
 
-export function useAPI(call, args) {
+export function useAPI(call) {
   const [result, setResult] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
     async function callAsynch() {
       try {
-        call(args).then(res => {
+        call([...arguments].splice(1)).then(res => {
           setResult(
             res.data.data
           );
@@ -39,7 +39,7 @@ export function useAPI(call, args) {
     }
 
     callAsynch();    
-  }, [call, args]);
+  }, [call]);
 
   return [result, loading];
 }
