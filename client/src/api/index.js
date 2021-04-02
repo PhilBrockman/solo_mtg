@@ -1,4 +1,5 @@
 import axios from 'axios'
+import React from 'react'
 
 const api = axios.create({
     baseURL: 'http://localhost:3000/api',
@@ -17,5 +18,15 @@ const apis = {
     deletePlayingCardById,
     getPlayingCardById,
 }
+
+export function useAPI(call){
+    const [data, setData] = React.useState(null)
+  
+    call().then(res => {
+      setData(res.data.data)
+    })
+  
+    return data;
+  }
 
 export default apis

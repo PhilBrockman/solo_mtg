@@ -24,6 +24,11 @@ class Links extends Component {
                 <Collapse>
                     <List>
                         <Item>
+                            <Link to="/playingCards" className="nav-link">
+                                Now we're gamin'
+                            </Link>
+                        </Item>
+                        <Item>
                             <Link to="/playingCards/list" className="nav-link">
                                 View all Cards
                             </Link>
