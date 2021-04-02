@@ -79,7 +79,7 @@ const locations = {
 
 const PlayGame = props => {
   const [hordeDeck, setHordeDeck] = React.useState(null)
-  const [currentDeal, setCurrentDeal] = React.useState([])
+  const [battefieldCards, setBattlefieldCards] = React.useState([])
 
   React.useEffect(() => {
     let deck = []
@@ -122,7 +122,7 @@ const PlayGame = props => {
       console.log('next', next, currentDeck.length)
     } while(next.name.toLowerCase().includes("token"))
 
-    setCurrentDeal(out)
+    setBattlefieldCards(battefieldCards.concat(out))
     setHordeDeck(currentDeck.concat(out))
     return out
   }
@@ -131,7 +131,7 @@ const PlayGame = props => {
     return <>
             <>{library().length} cards</>
             <button onClick={dealHordeDeck}>Horde Action</button>
-            <CardViewer cards={currentDeal} />
+            <CardViewer cards={battefieldCards} />
           </>
   } else {
     return <>Loading Game</>
