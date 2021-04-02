@@ -30,7 +30,6 @@ const EditCardAttributeInPlace = (props) =>{
   const [txt, setTxt] = React.useState(props.row.original[attr]);
   
   const handleClick = event => {
-    setEditing(true)
     setEditing(true);
   }
 
