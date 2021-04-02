@@ -6,7 +6,7 @@ console.log("in game.jsx")
 export const Game = (props) => {
   let [cards, loading] = useAPI(api.getAllPlayingCards)
 
-  if(loading == false){
+  if(loading === false){
     console.log('cards', cards)
     return cards.map((item, index) =>{
       return( 

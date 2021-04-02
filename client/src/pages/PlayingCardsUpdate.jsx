@@ -11,7 +11,7 @@ const PlayingCardsUpdate = (props) => {
     const _id = props.match.params.id
     const [values, loading] = useAPI(api.getPlayingCardById, _id)
 
-    if(loading == false){
+    if(loading === false){
         console.log('values', values)
         return <UpdateValues
                     values={values}
@@ -19,7 +19,7 @@ const PlayingCardsUpdate = (props) => {
                     />
     }
     
-    return <>working</>
+    return <>Loading...</>
 }
 
 const UpdateValues = (props) => {

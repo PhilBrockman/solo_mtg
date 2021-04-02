@@ -22,6 +22,7 @@ class NavBar extends Component {
                     <Logo />
                     <Links />
                 </Nav>
+                <div>THIS WEBSITE IS NEITHER PRODUCED BY NOR AFFILIATED WITH WIZARDS OF THE COAST.</div>
             </Container>
         )
     }

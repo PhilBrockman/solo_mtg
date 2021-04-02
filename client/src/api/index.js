@@ -33,14 +33,13 @@ export function useAPI(call, args) {
           setLoading(false);
         })
       } catch (error) {
+        console.error("something went wrong", error)
         setLoading(null);
       }
     }
 
-
-    callAsynch();
-    
-  }, []);
+    callAsynch();    
+  }, [call, args]);
 
   return [result, loading];
 }

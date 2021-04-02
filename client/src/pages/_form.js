@@ -8,14 +8,14 @@ export const initialForm = {
         rulesText: {
           label: 'Rules Text',
         },
-        quantity: {
-          label: "Quantity",
+        img: {
+          label: 'The Gatherer Img'
         }
       };
 
 export const useForm = (initialValues, onSubmit) => {
   if(initialValues == null){
-    initialValues = {name:'', rulesText:'', quantity: 1}
+    initialValues = {name:'', rulesText:'', img: ''}
   }
   const [state, dispatch] = React.useReducer(formReducer, initialValues);
 

@@ -10,7 +10,7 @@ const Wrapper = styled.div`
 const PlayingCardsList = () => {
     const [playingCards, loading] = useAPI(api.getAllPlayingCards)
 
-   if(loading == false){
+   if(loading === false){
         return (
             <Wrapper>
                 <DeckTable

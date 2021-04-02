@@ -23,6 +23,15 @@ const UpdatePlayingCard = (props) => {
   return <Update onClick={updatePlayingCard}>Update</Update>
 }
 
+const PlayingCardRulesText = (props) =>{
+  const [editing, setEditing] = React.useState(false)
+  const handleClick = event => {
+    console.log("toggling editing to true")
+    setEditing(true)
+  }
+  return <div onClick={handleClick}>{props.row.original.rulesText}</div>
+}
+
 const DeletePlayingCard = props => {
     const deleteCard = event => {
         event.preventDefault()
@@ -48,12 +57,14 @@ const DeckTable = (props) => {
             accessor: 'name', 
           },
           {
-            Header: 'Quantity',
-            accessor: 'quantity',
-          }, 
-          {
             Header: 'Rules Text',
             accessor: 'rulesText',
+
+            Cell: (tableProps) => (
+              <PlayingCardRulesText
+                {...tableProps}
+              />
+            )
           }, 
           {
             Header: 'img',
