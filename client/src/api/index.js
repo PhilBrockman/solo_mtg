@@ -19,14 +19,14 @@ const apis = {
     getPlayingCardById,
 }
 
-export function useAPI(call) {
+export function useAPI(call, args) {
   const [result, setResult] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    async function fetchAllCards() {
+    async function callAsynch() {
       try {
-        call().then(res => {
+        call(args).then(res => {
           setResult(
             res.data.data
           );
@@ -38,24 +38,11 @@ export function useAPI(call) {
     }
 
 
-    fetchAllCards();
+    callAsynch();
     
   }, []);
 
   return [result, loading];
 }
-
-export function useAPuuI(call){
-    const [data, setData] = React.useState(null)
-
-    console.log("using api")
-  
-    call().resolve().then(res => {
-      console.log("setting data")
-      setData(res.data.data)
-    })
-  
-    return data;
-  }
 
 export default apis

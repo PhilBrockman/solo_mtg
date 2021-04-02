@@ -1,6 +1,6 @@
 import React from 'react'
 import DeckTable from './DeckTable.js'
-import api from '../api'
+import api, {useAPI} from '../api'
 import styled from "styled-components"
 
 const Wrapper = styled.div`
@@ -8,24 +8,16 @@ const Wrapper = styled.div`
     `
 
 const PlayingCardsList = () => {
-    const [playingCards, setPlayingCards] = React.useState(null)
+    const [playingCards, loading] = useAPI(api.getAllPlayingCards)
 
-    React.useEffect(() => {
-        console.log("running effect")
-        api.getAllPlayingCards().then(playingCards => {
-            setPlayingCards(playingCards)
-            console.log('Pages: PlayingCardsList -> render -> playingCards', playingCards)
-        })
-       }, []);
-
-   if(playingCards){
+   if(loading == false){
         return (
-        <Wrapper>
-            <DeckTable
-                data={playingCards.data.data}
-                />
-        </Wrapper>
-        )
+            <Wrapper>
+                <DeckTable
+                    data={playingCards}
+                    />
+            </Wrapper>
+            )
     } else {
         return (
             <>Loading...</>
