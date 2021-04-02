@@ -58,7 +58,7 @@ const PlayingCardsInsert = props => {
   console.log(props.card)
   if(candidates.length > 0){
     console.log('candidates', candidates)
-    startingValues={name:props.card, rulesText:candidates[0].rulesText, img: candidates[0].img}
+    startingValues={name:props.card, rulesText:candidates[0].rulesText, img: candidates[0].url}
   } else {
     console.log(" nothing found")
     startingValues = {name:props.card, rulesText:'', img: ''}

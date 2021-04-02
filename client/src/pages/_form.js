@@ -15,9 +15,6 @@ export const initialForm = {
       };
 
 export const useForm = (initialValues, onSubmit) => {
-  if(initialValues == null){
-    initialValues = {name:'', rulesText:'', img: ''}
-  }
   const [state, dispatch] = React.useReducer(formReducer, initialValues);
 
   React.useEffect(() => {
@@ -49,7 +46,7 @@ export const PlayingCardShard = props => {
                     <Widget.Label>{initialForm[key].label}</Widget.Label>
                       <Widget.InputText
                         onChange={props.changeHandler}
-                        id={key}
+                        key={key}
                         value={props.state[key]}
                         />
                     </div>
