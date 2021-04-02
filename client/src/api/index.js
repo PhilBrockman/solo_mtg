@@ -10,7 +10,11 @@ const api = axios.create({
     baseURL: 'http://localhost:3000/api',
 })
 
-export const insertPlayingCard = payload => api.post(`/playingCard`, payload)
+export const insertPlayingCard = payload => api.post(`/playingCard`, payload).then(res => {
+  console.log("resolved create call", res)
+}).catch(error => {
+  console.log("error", error)
+})
 export const getAllPlayingCards = () => api.get(`/playingCards`)
 export const updatePlayingCardById = (id, payload) => api.put(`/playingCard/${id}`, payload)
 export const deletePlayingCardById = id => api.delete(`/playingCard/${id}`)

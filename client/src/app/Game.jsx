@@ -24,11 +24,14 @@ export const Game = (props) => {
                 allCards={cards}
                 />
     } else {
-      let totalCards = deck.split("\n").map(card => parseInt(card.split(" ")[0])).reduce((a, b) => a + b)
       let validStoredCards = cards.filter(card => card.url?.length > 0 || card.rulesText?.length > 0)
 
       let requestedCards = deck.split("\n").map(card => cardName(card))
       let found = deck.split("\n").filter(requested => validStoredCards.map(card => card.name).includes(requested.split(" ").splice(1).join(" ")))
+      
+      console.log('found', found)
+      let totalCards = found.length > 0 ? found.map(card => parseInt(card.split(" ")[0])).reduce((a, b) => a + b)
+                                          : 0;
 
       let notFound = requestedCards.filter(card => !validStoredCards.map(card => card.name).includes(card))
       

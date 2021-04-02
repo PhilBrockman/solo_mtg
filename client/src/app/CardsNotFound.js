@@ -5,10 +5,7 @@ import {PlayingCardsUpdate} from "../pages"
 import {DisplayCard} from "../components"
 
 const FetchMTGData = props => {
-  const [gatherer, setGatherer] = React.useState(null)
-  const [initialValues, setInitialValues] = React.useState({
-    name: props.name, rulesText: '', url: ''
-  })
+  const [initialValues, setInitialValues] = React.useState(null)
 
   React.useEffect(() => {
     getMTGCardByName(props.name).then((res, err )=> {
@@ -19,23 +16,17 @@ const FetchMTGData = props => {
 
         if(res.length === 0){
           console.log("no cards found with name", props.name)
-          setGatherer(true)
+          setInitialValues({name: props.name, rulesText: '', url: ''})
         } else {
           console.log("res", res)
-          setGatherer(res[0])
+          setInitialValues({name: props.name, rulesText: res[0].text, url: res[0].imageUrl})
         }
       }
   })}, [props.name])
 
-  if(gatherer){
-    console.log('gatherer', gatherer)
-    let tmp = {}
-        tmp.name = props.name
-        tmp.rulesText = gatherer.text || ""
-        tmp.url = gatherer.imageUrl || ""
-    console.log("calling with ", {...tmp})
+  if(initialValues){
     return <PlayingCardsInsert
-              initialValues={tmp}/>
+              initialValues={initialValues}/>
   } else {
     console.log("gathering magicks")
     return <>gathering... {props.name}</>
@@ -43,32 +34,37 @@ const FetchMTGData = props => {
 }
 
 const PlayingCardsInsert = props => {
+  const [hidden, setHidden] = React.useState(false)
   const removal_id = "remove-"+props.initialValues.name
   const {state, submitHandler, changeHandler} = useForm(props.initialValues, values => handleCreatePlayingCard(values));
 
   const handleCreatePlayingCard = async (payload) => {
-    await api.insertPlayingCard(payload).then(res => {
-      let n = document.getElementById(removal_id)
-      if(n) { n.remove()}
+    await api.insertPlayingCard(payload).then((res,err) => {
+      setHidden(true)
     })
   }
+
   let content = "";
   if(props.initialValues.text?.length === 0 || props.initialValues?.url.length === 0){
     content= (
-      <div id={removal_id}>
+      <>
         <PlayingCardShard
             state={state}
             submitHandler={submitHandler}
             changeHandler={changeHandler}
             />
-      </div>
+      </>
     ); 
   } else {
     handleCreatePlayingCard(props.initialValues)
-    content = <>loading {props.initialValues.name}</> 
+    content = <div className={removal_id}>loading {props.initialValues.name}</div> 
   }
 
-  return <div>{content}</div>
+  if(hidden){
+    return ""
+  } else{ 
+    return <div>{content}</div>
+  }  
 }
 
 export const CardsNotFound = props => {

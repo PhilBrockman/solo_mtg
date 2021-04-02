@@ -11,6 +11,7 @@ createPlayingCard = (req, res) => {
         })
     }
 
+
     const playingCard = new PlayingCard(body)
 
     if (!playingCard) {
@@ -27,9 +28,10 @@ createPlayingCard = (req, res) => {
             })
         })
         .catch(error => {
-            return res.status(400).json({
+            console.log("error", error)
+            return res.status(200).json({
                 error,
-                message: 'Playing Card not created!',
+                message: 'Playing Card not created due to server issue.',
             })
         })
 }
