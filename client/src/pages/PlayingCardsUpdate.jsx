@@ -1,11 +1,6 @@
 import React from 'react'
 import api, {useAPI} from '../api'
 import {useForm, PlayingCardShard} from './_form.js'
-import * as Magic from "mtgsdk";
-
-const getRulesText = (name) => {
-   return Magic.card.where({name:`"${name}"`})
-}
 
 const PlayingCardsUpdate = (props) => {
     const _id = props.match.params.id
@@ -32,8 +27,6 @@ const UpdateValues = (props) => {
             window.location.href = "/playingCards/list"
         })
     }
-
-    console.log(getRulesText(state.name))
 
     return (
         <PlayingCardShard
