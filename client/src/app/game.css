@@ -1,0 +1,23 @@
+.battlefield {
+  display: flex;
+  flex-direction: row-reverse;
+  background-color: purple;
+}
+
+.in-play{
+  padding: 10px;
+  background-color: pink;
+  max-width:223px;
+  max-height:310px;
+}
+
+.in-play .name{
+  min-height:60px;
+  width:100%;
+  background-color: red;
+}
+
+.in-play .rules-text{
+  min-height:160px;
+  background-color: salmon;
+}
