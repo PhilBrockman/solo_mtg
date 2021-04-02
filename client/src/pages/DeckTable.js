@@ -4,25 +4,11 @@ import styled from 'styled-components'
 import api,{useAPI} from '../api'
 import "./pages.css"
 
-const Update = styled.div`
-    color: #ef9b0f;
-    cursor: pointer;
-    `
 
 const Delete = styled.div`
     color: #ff0000;
     cursor: pointer
     `
-
-const UpdatePlayingCard = (props) => {
-  const updatePlayingCard = event => {
-      event.preventDefault()
-      window.location.href = `/playingCards/update/${props.row.original._id}`
-
-  }
-
-  return <Update onClick={updatePlayingCard}>Update</Update>
-}
 
 const EditCardAttributeInPlace = (props) =>{
   const attr = props.attr
@@ -38,11 +24,12 @@ const EditCardAttributeInPlace = (props) =>{
 
     console.log("saving",_id)
     api.getPlayingCardById(_id).then(old=>{
-      console.log("existing db object:", old[attr])
-      if(old[attr] === new_value){
+      let data = old.data.data
+      console.log("existing db object:", data[attr])
+      if(data[attr] === new_value){ // no need to call db 
+        console.log("no changes")
         setEditing(false)
       } else {
-        let data = old.data.data
         data[attr] = new_value;
         console.log('new db object', data[attr])
         api.updatePlayingCardById(_id, data).then(_ => {
@@ -57,7 +44,7 @@ const EditCardAttributeInPlace = (props) =>{
   if(editing){
     return <EditInPlace initialText={txt} saveChanges={updatePlayingCardAttribute}/>
   } else {
-    return <div onClick={handleClick}>{txt}</div>
+    return <div className="editable-in-place" onClick={handleClick}>{txt}</div>
   } 
 }
 
@@ -106,6 +93,12 @@ const DeckTable = (props) => {
           {
             Header: 'Name',
             accessor: 'name', 
+            Cell: (tableProps) => (
+              <EditCardAttributeInPlace
+                {...tableProps}
+                attr="name"
+              />
+            )
           },
           {
             Header: 'Rules Text',
@@ -123,17 +116,6 @@ const DeckTable = (props) => {
             accessor: 'url',
           }, 
         ],
-      },
-      {
-        Header: "",
-        id: "update",
-        accessor: (str) => "udate",
-
-        Cell: (tableProps) => (
-          <UpdatePlayingCard 
-            {...tableProps}
-          />
-        )
       },
       {
         Header: "",
