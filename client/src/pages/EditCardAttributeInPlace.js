@@ -32,7 +32,6 @@ export const EditCardAttributeInPlace = (props) =>{
     })
   }
 
-
   if(editing){
     return <EditInPlace initialText={txt} saveChanges={updatePlayingCardAttribute}/>
   } else {
