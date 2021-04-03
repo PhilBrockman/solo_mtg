@@ -24,30 +24,13 @@ const deepCopy = (inObject) => {
   return JSON.parse(JSON.stringify(inObject));
 }
 
-export const PlayGame = props => {
-  const [hordeDeck, setHordeDeck] = React.useState(null)
-
-  const zone = loc => {
-    if(hordeDeck){
-      let res = hordeDeck.filter(card => card.location === loc)
-      return deepCopy(res)
-    }
-  }
-
-  const loxs = {
-    LIBRARY: "l",
-    GRAVEYARD: "g",
-    EXILE: "e",
-    BATTLEFIELD: "b",
-  }
-
-  React.useEffect(() => {
-    let deck = []
-    const tmp = props.initialDeck.map(item => {
+const initializeDeck = (initialDeck, allCards, loc) => {
+  let deck = []
+    const tmp = initialDeck.map(item => {
       return( 
           {
             quantity: cardCount(item),
-            info: props.allCards.filter(
+            info: allCards.filter(
                     card => cardName(item) == card.name && 
                       (card.rulesText?.length > 0 || 
                         card.url?.length > 0))[0]
@@ -58,13 +41,34 @@ export const PlayGame = props => {
     for (let cards in tmp) {
       let card = tmp[cards]
       for (let i=0; i<card.quantity; i++) {
-        card.info.location = loxs.LIBRARY
+        card.info.location = loc
         card.info.card_id = deck.length
-        console.log(deck.length)
         deck.push({...card.info});
       }
     }
-    setHordeDeck(shuffle(deck))// s.then(()=>console.log(deck))
+    return shuffle(deck)
+}
+
+const loxs = {
+  LIBRARY: "l",
+  GRAVEYARD: "g",
+  EXILE: "e",
+  BATTLEFIELD: "b",
+}
+
+export const PlayGame = props => {
+  const [hordeDeck, setHordeDeck] = React.useState(null)
+  const [activeZone, setActiveZone] = React.useState(null)
+
+  const zone = loc => {
+    if(hordeDeck){
+      let res = hordeDeck.filter(card => card.location === loc)
+      return deepCopy(res)
+    }
+  }
+
+  React.useEffect(() => {
+    setHordeDeck(initializeDeck(props.initialDeck, props.allCards, loxs.LIBRARY))// s.then(()=>console.log(deck))
   }, [])
 
   const activateHordeDeck = event => {
@@ -89,21 +93,17 @@ export const PlayGame = props => {
     setHordeDeck(newDeckState)
   }
 
-  const [activeZone, setActiveZone] = React.useState(null)
-
+  
   const handleZoneClick = (event, value) => {
     setActiveZone(value)
   }
   let zones = []
-
-    for(const k of Object.keys(loxs)){
-      let tmp = <div key={k} onClick={(e) => handleZoneClick(e, loxs[k])}>
-                  {k} ({zone(loxs[k])?.length})
-                </div>
-
-      zones.push(tmp)
-    }
-    // zones = JSON.stringify(loxs)
+  for(const k of Object.keys(loxs)){
+    let tmp = <div key={k} onClick={(e) => handleZoneClick(e, loxs[k])}>
+                {k} ({zone(loxs[k])?.length})
+              </div>
+    zones.push(tmp)
+  }
 
   if(hordeDeck){
     return <>
