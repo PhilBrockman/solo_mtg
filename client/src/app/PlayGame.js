@@ -130,7 +130,6 @@ const Interaction = props => {
 }
 
 const CardViewer = props => {
-  console.log("cardvieer's props", props)
   let output = props.cards.map((item, index) => {
     let display;
     if(item.url?.length > 0){
@@ -223,6 +222,7 @@ export const PlayGame = props => {
       return card
     })
 
+    setActiveZone(loxs.BATTLEFIELD)
     setHordeDeck(newDeckState)
   }
 
@@ -234,7 +234,6 @@ export const PlayGame = props => {
     }
     let exiles = library.slice(0,Math.abs(cards)).map(card => card.card_id)
     let newState = deepCopy(hordeDeck).map(card => {
-      console.log("Searching for ",card.card_id, exiles)
       if(exiles.includes(card.card_id)){
         console.log("exiling", card.name)
         card.location = loxs.EXILE
