@@ -1,23 +1,38 @@
-.battlefield {
+.game-area {
   display: flex;
-  flex-direction: row-reverse;
-  flex-wrap: wrap;
+  flex-direction: column;
+}
+
+.zones-changes {
+  display: flex;
+  background-color: red;
+  flex-direction: row;
+}
+
+.history {
+  background-color: yellowgreen;
+  min-width: 150px;
+}
+
+.board-state {
+  display: flex;
+  flex-direction: row;
+}
+
+.battlefield {
+  flex-grow: 1;
+  display:flex;
+  flex-wrap:wrap;
+  background-color: purple;
+  align-content: flex-start;
 }
 
 .in-play, .in-play img{
-  margin-right: 10px;
-  margin-left: 15px;
+  background-color: blue;
   max-width:143px;
   max-height:310px;
 }
 
-.in-play .name{
-  min-height:60px;
-  width:100%;
-  background-color: red;
-}
-
-.in-play .rules-text{
-  min-height:160px;
-  background-color: salmon;
+.floating {
+  position: absolute;
 }

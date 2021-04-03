@@ -1,3 +1,4 @@
+import { card } from "mtgsdk";
 import React from "react"
 import useCardKeyTap from "./useKeyHook.js"
 
@@ -73,80 +74,6 @@ const changeElementById = (card_id, newValue, deck) => {
   return newDeckState
 }
 
-// const moveCardToZoneById = (card_id, newZone, deck) => {
-//   let changed = {...deck.filter(card => card_id === card.card_id)[0]}
-//   changed.location = newZone
-//   return changeElementById(card_id, changed, deck)
-// }
-
-
-export const PlayGame = props => {
-  const [history, setHistory] = React.useState([])
-  const [hordeDeck, setHordeDeck] = React.useState(null)
-  const [activeZone, setActiveZone] = React.useState(null)
-
-  React.useEffect(() => {
-    setHistory([...history, hordeDeck])
-  }, [hordeDeck])
-
-  const handleZoneClick = (event, value) => {
-    setActiveZone(value)
-  }
-
-  const activateHordeDeck = event => {
-    //deep copy the current deck
-    let currentDeck = filterByLocation(hordeDeck, loxs.LIBRARY)
-    let out = []
-    let next
-
-    do { //pop cards until we find a non-token
-      next = currentDeck.pop()
-      out.push(next)
-    } while(next.name.toLowerCase().includes("token"))
-
-    let newDeckState = deepCopy(hordeDeck).map(card => {
-      if(out.map(item => item.card_id).includes(card.card_id)){
-        card.location = loxs.BATTLEFIELD
-      }
-      return card
-    })
-
-    setHordeDeck(newDeckState)
-  }
-
-  const changeCardById = (card_id, newValue) => {
-    setHordeDeck(changeElementById(card_id, newValue, hordeDeck))
-  }
-
-  React.useEffect(() => {
-    setHordeDeck(initializeDeck(props.initialDeck, props.allCards, loxs.LIBRARY))
-  }, [])
-
-  if(hordeDeck){
-    return <>
-            <div>
-              <button onClick={activateHordeDeck}>Activate Horde</button>
-            </div>
-            <>
-              <Zones 
-                locate={(loc) => filterByLocation(hordeDeck, loc)} 
-                handleClick={handleZoneClick} 
-              />
-              {history.length}
-            </>
-            <div>
-              <h2>{activeZone}</h2>
-              <CardViewer 
-                cards={filterByLocation(hordeDeck, activeZone)}
-                changeCardById={changeCardById}
-                />
-            </div>
-          </>
-  } else {
-    return <>Loading Game</>
-  }
-}
-
 const Zones = (props) => {
   let zones = []
   for(const k of Object.keys(loxs)){
@@ -162,21 +89,25 @@ const Zones = (props) => {
 //number keys for counters
 // b/g/e/l to send to a different zone
 const Interaction = props => {
-  let [over, setOver] = React.useState(false);
+  const [over, setOver] = React.useState(false);
+  const pressedTap = useCardKeyTap(["t"], over, () => tappedT(props.card))
+  const pressedZone = useCardKeyTap(Object.values(loxs), over, (loc) => setZone(props.card, loc))
 
-  const tappedT = card => {
-    console.log("starting with ", card.tapped)
-
-      if(card.tapped === undefined || card.tapped === false){
-        card.tapped = true
-      } else {
-        card.tapped = false
-      }
-    console.log("changing to ", card.tapped)
+  const updateCard = card => {
     props.changeCardById(card.card_id, card)
   }
 
-  const pressedT = useCardKeyTap("t", over, () => tappedT(props.card))
+  const tappedT = card => {
+    card.tapped = !(card.tapped === true)
+    updateCard(card)
+  }
+
+  const setZone = (card, loc) => {
+    if(card.location !== loc){
+      card.location = loc
+      updateCard(card)
+    }
+  }
 
   let cardstyle={}
 
@@ -189,7 +120,6 @@ const Interaction = props => {
 
   cardstyle.transform = props.card.tapped ? `rotate(45deg)` 
                                           : `rotate(0deg)`
-
 
   return <div style={cardstyle}
             onMouseOver={()=>setOver(true)} 
@@ -223,4 +153,131 @@ const CardViewer = props => {
   return <div className="battlefield">
           {output}
           </div>
+}
+
+const HordeDeck = props => {
+  const drawCard = <button onClick={props.activateHordeDeck}>Activate Horde</button>
+
+  const damages = [-1, -5, -10].map(damage => {
+    return <button key={damage} onClick={() => props.burn(damage)}>{damage}</button>
+  })
+  return <>
+    {drawCard}
+    {damages}
+  </>
+}
+
+const History = props => {
+  console.log("history", props)
+  let output = props.history.map((item,index) => {
+    if(item){
+      return (<div key={index} onClick={() => props.rollbackHordeDeckTo(item, index)}>
+        {index} - {filterByLocation(item, loxs.LIBRARY).length}
+      </div>);
+    } else {
+      return (
+        <></>
+      )
+    }
+  })
+  return <div className="history">
+            {output.reverse()}
+          </div>
+}
+
+export const PlayGame = props => {
+  const [gameover, setGameOver] = React.useState(null)
+  const [history, setHistory] = React.useState([])
+  const [hordeDeck, setHordeDeckDirectly] = React.useState(null)
+  const [activeZone, setActiveZone] = React.useState(null)
+
+  const setHordeDeck = (deck) => {
+    setHordeDeckDirectly(deck)
+    setHistory([...history, deck])
+  }
+
+  const rollbackHordeDeckTo = (deck, hIndex) => {
+    setHordeDeck(deck)
+    setHistory(history.slice(0, hIndex+1))
+  }
+
+  const handleZoneClick = (event, value) => {
+    setActiveZone(value)
+  }
+
+  const activateHordeDeck = event => {
+    //deep copy the current deck
+    let currentDeck = filterByLocation(hordeDeck, loxs.LIBRARY)
+    let out = []
+    let next
+
+    do { //pop cards until we find a non-token
+      next = currentDeck.pop()
+      out.push(next)
+    } while(next.name.toLowerCase().includes("token"))
+
+    let newDeckState = deepCopy(hordeDeck).map(card => {
+      if(out.map(item => item.card_id).includes(card.card_id)){
+        card.location = loxs.BATTLEFIELD
+      }
+      return card
+    })
+
+    setHordeDeck(newDeckState)
+  }
+
+  const burn = cards => {
+    let library = filterByLocation(hordeDeck, loxs.LIBRARY)
+    if(cards > library.length){
+      setGameOver("win");
+      return;
+    }
+    let exiles = library.slice(0,Math.abs(cards)).map(card => card.card_id)
+    let newState = deepCopy(hordeDeck).map(card => {
+      console.log("Searching for ",card.card_id, exiles)
+      if(exiles.includes(card.card_id)){
+        console.log("exiling", card.name)
+        card.location = loxs.EXILE
+        return card
+      } else {
+        return card
+      }
+    })
+    setHordeDeck(newState)
+  }
+
+  const changeCardById = (card_id, newValue) => {
+    setHordeDeck(changeElementById(card_id, newValue, hordeDeck))
+  }
+
+  React.useEffect(() => {
+    setHordeDeck(initializeDeck(props.initialDeck, props.allCards, loxs.LIBRARY))
+  }, [])
+
+  if(hordeDeck){
+    return  <div className="game-area">
+              <div className="zones-changes">
+                <HordeDeck 
+                  activateHordeDeck={activateHordeDeck}
+                  burn={burn}
+                />
+                <Zones 
+                  locate={(loc) => filterByLocation(hordeDeck, loc)} 
+                  handleClick={handleZoneClick} 
+                />
+              </div>
+              <div className="board-state">
+                <History 
+                  rollbackHordeDeckTo={rollbackHordeDeckTo}
+                  history={history}
+                />
+                <CardViewer 
+                  cards={filterByLocation(hordeDeck, activeZone)}
+                  changeCardById={changeCardById}
+                  />
+              </div>
+            </div>
+  } else {
+    return <>Loading Game</>
+  }
 }

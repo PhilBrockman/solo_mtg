@@ -1,10 +1,10 @@
 import React from 'react'
 
-export default function useCardKeyTap(targetKey, condition, callback) {
+export default function useCardKeyTap(targetKeys, condition, callback) {
   React.useEffect(() => {
     function downHandler({ key }) {
-      if (condition && key === targetKey) {
-        callback();
+      if (condition && targetKeys.includes(key)) {
+        callback(key);
       }
     }
 
@@ -12,7 +12,7 @@ export default function useCardKeyTap(targetKey, condition, callback) {
     return () => {
       window.removeEventListener('keydown', downHandler);
     };
-  }, [targetKey, callback]);
+  }, [targetKeys, callback]);
 
   return null;
 }
