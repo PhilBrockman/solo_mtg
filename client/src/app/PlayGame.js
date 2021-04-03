@@ -129,6 +129,26 @@ const Interaction = props => {
           </div>
 }
 
+const ScratchArea = props => {
+  const [editing, setEditing] = React.useState(false)
+  const [headerText, setHeaderText] = React.useState(props.card?.header || "")
+  useCardKeyTap(["Enter"], editing, ()=>saveChanges())
+
+  const saveChanges = () => {
+    setEditing(false)
+    let tmp = {...props.card}
+    tmp.header = headerText
+    props.changeCardById(props.card.card_id, tmp)
+  }
+
+  if(editing ){
+    return <input onChange={(e) => setHeaderText(e.target.value)} value={headerText}></input>
+  } else {
+    return <div onClick={()=>setEditing(true)}>{headerText || "click"}</div>
+  }
+  
+}
+
 const CardViewer = props => {
   let output = props.cards.map((item, index) => {
     let display;
@@ -143,6 +163,8 @@ const CardViewer = props => {
     return (
       <div className={"in-play"} key={index}>
         <Interaction card={item} changeCardById={props.changeCardById}>
+
+          <ScratchArea card={item} changeCardById={props.changeCardById} />
           {display}
         </Interaction>
       </div>
@@ -160,9 +182,13 @@ const HordeDeck = props => {
   const damages = [-1, -5, -10].map(damage => {
     return <button key={damage} onClick={() => props.burn(damage)}>{damage}</button>
   })
+
+  const shuffleButton = "shuffle"
+
   return <>
     {drawCard}
     {damages}
+    {shuffleButton}
   </>
 }
 
@@ -254,28 +280,32 @@ export const PlayGame = props => {
   }, [])
 
   if(hordeDeck){
-    return  <div className="game-area">
-              <div className="zones-changes">
-                <HordeDeck 
-                  activateHordeDeck={activateHordeDeck}
-                  burn={burn}
-                />
-                <Zones 
-                  locate={(loc) => filterByLocation(hordeDeck, loc)} 
-                  handleClick={handleZoneClick} 
-                />
-              </div>
-              <div className="board-state">
-                <History 
-                  rollbackHordeDeckTo={rollbackHordeDeckTo}
-                  history={history}
-                />
-                <CardViewer 
-                  cards={filterByLocation(hordeDeck, activeZone)}
-                  changeCardById={changeCardById}
+    if(!gameover){
+      return  <div className="game-area">
+                <div className="zones-changes">
+                  <HordeDeck 
+                    activateHordeDeck={activateHordeDeck}
+                    burn={burn}
                   />
+                  <Zones 
+                    locate={(loc) => filterByLocation(hordeDeck, loc)} 
+                    handleClick={handleZoneClick} 
+                  />
+                </div>
+                <div className="board-state">
+                  <History 
+                    rollbackHordeDeckTo={rollbackHordeDeckTo}
+                    history={history}
+                  />
+                  <CardViewer 
+                    cards={filterByLocation(hordeDeck, activeZone)}
+                    changeCardById={changeCardById}
+                    />
+                </div>
               </div>
-            </div>
+    } else {
+      return "Game over!"
+    }
   } else {
     return <>Loading Game</>
   }
