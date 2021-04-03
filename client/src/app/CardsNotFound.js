@@ -62,7 +62,7 @@ const PlayingCardsInsert = props => {
 
   if(hidden){
     return ""
-  } else{ 
+  } else { 
     return <div>{content}</div>
   }  
 }
