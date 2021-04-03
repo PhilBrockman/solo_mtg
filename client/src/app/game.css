@@ -19,6 +19,12 @@
   flex-direction: row;
 }
 
+.horde-controls {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+}
+
 .battlefield {
   flex-grow: 1;
   display:flex;

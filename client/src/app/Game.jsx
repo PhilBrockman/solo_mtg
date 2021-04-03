@@ -3,7 +3,8 @@ import api, {useAPI} from "../api"
 import {CardsNotFound} from "./CardsNotFound.js"
 import {startingDeck} from "./StartingDeck.js"
 import "./game.css"
-import {PlayGame, cardName} from "./PlayGame.js"
+import {PlayGame} from "./PlayGame.js"
+import {cardName} from "./utils.js"
 
 export const Game = (props) => {
   let [cards, loading] = useAPI(api.getAllPlayingCards)
