@@ -81,8 +81,13 @@ const changeElementById = (card_id, newValue, deck) => {
 
 
 export const PlayGame = props => {
+  const [history, setHistory] = React.useState([])
   const [hordeDeck, setHordeDeck] = React.useState(null)
   const [activeZone, setActiveZone] = React.useState(null)
+
+  React.useEffect(() => {
+    setHistory([...history, hordeDeck])
+  }, [hordeDeck])
 
   const handleZoneClick = (event, value) => {
     setActiveZone(value)
@@ -127,6 +132,7 @@ export const PlayGame = props => {
                 locate={(loc) => filterByLocation(hordeDeck, loc)} 
                 handleClick={handleZoneClick} 
               />
+              {history.length}
             </>
             <div>
               <h2>{activeZone}</h2>
@@ -183,23 +189,6 @@ const Interaction = props => {
 
   cardstyle.transform = props.card.tapped ? `rotate(45deg)` 
                                           : `rotate(0deg)`
-
-
-
-  // if(over){
-  //   if(pressedG){
-  //     console.log("pressed", props.card.card_id)
-  //   }
-
-  //   if(pressedT){
-  //     console.log("tapping", props.card.name)
-  //     if(tapped){
-  //       cardstyle.transform =`rotate(45deg)`
-  //     } else{
-  //       cardstyle.transform =`rotate(-15deg)`
-  //     }
-  //   }
-  // }
 
 
   return <div style={cardstyle}
