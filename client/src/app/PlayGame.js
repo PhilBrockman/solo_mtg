@@ -20,10 +20,21 @@ function shuffle(deck){
   return deck
 }
 
+const deepCopy = (inObject) => {
+  return JSON.parse(JSON.stringify(inObject));
+}
+
 export const PlayGame = props => {
   const [hordeDeck, setHordeDeck] = React.useState(null)
 
-  const locations = {
+  const zone = loc => {
+    if(hordeDeck){
+      let res = hordeDeck.filter(card => card.location === loc)
+      return deepCopy(res)
+    }
+  }
+
+  const loxs = {
     LIBRARY: "l",
     GRAVEYARD: "g",
     EXILE: "e",
@@ -46,9 +57,8 @@ export const PlayGame = props => {
     )
     for (let cards in tmp) {
       let card = tmp[cards]
-      let count = card.quantity
-      for (let i=0; i<count; i++) {
-        card.info.location = locations.LIBRARY
+      for (let i=0; i<card.quantity; i++) {
+        card.info.location = loxs.LIBRARY
         card.info.card_id = deck.length
         console.log(deck.length)
         deck.push({...card.info});
@@ -57,27 +67,8 @@ export const PlayGame = props => {
     setHordeDeck(shuffle(deck))// s.then(()=>console.log(deck))
   }, [])
 
-  React.useEffect(() => {
-    if(hordeDeck){
-      console.log("changes to deck:", hordeDeck.filter(card => card.location != locations.BATTLEFIELD))
-    }  
-  }, [hordeDeck])
-
-
-  const deepCopy = (inObject) => {
-    return JSON.parse(JSON.stringify(inObject));
-  }
-  const library = () => {
-    let res = hordeDeck.filter(item => item.location === locations.LIBRARY)
-    return deepCopy(res)
-  }
-  const battlefield = () => {
-    let res = hordeDeck.filter(card => card.location === locations.BATTLEFIELD)
-    return deepCopy(res)
-  }
-  
-  const dealHordeDeck = event => {
-    let currentDeck = deepCopy(library())
+  const activateHordeDeck = event => {
+    let currentDeck = zone(loxs.LIBRARY)
     let out = []
     let next
 
@@ -90,26 +81,35 @@ export const PlayGame = props => {
     let newDeckState = deepCopy(hordeDeck).map(card => {
       if(out.map(item => item.card_id).includes(card.card_id)){
         console.log("moving to battlefiled")
-        card.location = locations.BATTLEFIELD
+        card.location = loxs.BATTLEFIELD
       }
       return card
     })
 
-    console.log("out", out.length)
-    console.log("battlefiled", battlefield().length)
-    console.log('library()', library().length)
-    console.log('battlefield()', battlefield().length)
-    console.log("overall deck length", hordeDeck.length)
-    console.log("new deck length", newDeckState.length)
-    
     setHordeDeck(newDeckState)
   }
 
+  const [activeZone, setActiveZone] = React.useState(null)
+
+  const handleZoneClick = (event, value) => {
+    setActiveZone(value)
+  }
+  let zones = []
+
+    for(const k of Object.keys(loxs)){
+      let tmp = <div key={k} onClick={(e) => handleZoneClick(e, loxs[k])}>
+                  {k} ({zone(loxs[k])?.length})
+                </div>
+
+      zones.push(tmp)
+    }
+    // zones = JSON.stringify(loxs)
+
   if(hordeDeck){
     return <>
-            <>{library().length} cards</>
-            <button onClick={dealHordeDeck}>Horde Action</button>
-            <CardViewer cards={battlefield()} />
+            <div><button onClick={activateHordeDeck}>Activate Horde</button></div>
+            <>{zones}</>
+            <div><CardViewer cards={zone(activeZone)} /></div>
           </>
   } else {
     return <>Loading Game</>
