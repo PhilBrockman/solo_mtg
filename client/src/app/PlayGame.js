@@ -73,17 +73,18 @@ const changeElementById = (card_id, newValue, deck) => {
   return newDeckState
 }
 
+// const moveCardToZoneById = (card_id, newZone, deck) => {
+//   let changed = {...deck.filter(card => card_id === card.card_id)[0]}
+//   changed.location = newZone
+//   return changeElementById(card_id, changed, deck)
+// }
+
+
 export const PlayGame = props => {
-  const [history, setHistory] = React.useState([])
   const [hordeDeck, setHordeDeck] = React.useState(null)
   const [activeZone, setActiveZone] = React.useState(null)
 
-  React.useEffect(() => {
-    setHistory([...history, hordeDeck])
-  }, [hordeDeck])
-
   const handleZoneClick = (event, value) => {
-    //whatever ends up happening to "zones" anyway
     setActiveZone(value)
   }
 
@@ -98,8 +99,7 @@ export const PlayGame = props => {
       out.push(next)
     } while(next.name.toLowerCase().includes("token"))
 
-    let newDeckState = deepCopy(hordeDeck).map(card => { 
-      //initialize each card's starting location to the battlefield
+    let newDeckState = deepCopy(hordeDeck).map(card => {
       if(out.map(item => item.card_id).includes(card.card_id)){
         card.location = loxs.BATTLEFIELD
       }
@@ -119,24 +119,23 @@ export const PlayGame = props => {
 
   if(hordeDeck){
     return <>
-      <div>
-        <button onClick={activateHordeDeck}>Activate Horde</button>
-      </div>
-      <>
-        <Zones 
-          locate={(loc) => filterByLocation(hordeDeck, loc)} 
-          handleClick={handleZoneClick} 
-        />
-        {history.length}
-      </>
-      <div>
-        <h2>{activeZone}</h2>
-        <CardViewer 
-          cards={filterByLocation(hordeDeck, activeZone)}
-          changeCardById={changeCardById}
-          />
-      </div>
-    </>
+            <div>
+              <button onClick={activateHordeDeck}>Activate Horde</button>
+            </div>
+            <>
+              <Zones 
+                locate={(loc) => filterByLocation(hordeDeck, loc)} 
+                handleClick={handleZoneClick} 
+              />
+            </>
+            <div>
+              <h2>{activeZone}</h2>
+              <CardViewer 
+                cards={filterByLocation(hordeDeck, activeZone)}
+                changeCardById={changeCardById}
+                />
+            </div>
+          </>
   } else {
     return <>Loading Game</>
   }
