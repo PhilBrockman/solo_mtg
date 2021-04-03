@@ -62,6 +62,23 @@ const loxs = {
   BATTLEFIELD: "b",
 }
 
+const changeElementById = (card_id, newValue, deck) => {
+  let newDeckState = deepCopy(deck).map(card => {
+    if(card.card_id === card_id){
+      return newValue
+    }
+    return card
+  })
+
+  return newDeckState
+}
+
+// const moveCardToZoneById = (card_id, newZone, deck) => {
+//   let changed = {...deck.filter(card => card_id === card.card_id)[0]}
+//   changed.location = newZone
+//   return changeElementById(card_id, changed, deck)
+// }
+
 
 export const PlayGame = props => {
   const [hordeDeck, setHordeDeck] = React.useState(null)
@@ -71,37 +88,19 @@ export const PlayGame = props => {
     setActiveZone(value)
   }
 
-  const zone = loc => {
-    if(hordeDeck){
-      return filterByLocation(hordeDeck, loc)
-    }
-  }
-
-  const changeElementById = (card_id, newValue) => {
-    let newDeckState = deepCopy(hordeDeck).map(card => {
-      if(card.card_id === card_id){
-        return newValue
-      }
-      return card
-    })
-  
-    setHordeDeck(newDeckState)
-  }
-
   const activateHordeDeck = event => {
-    let currentDeck = zone(loxs.LIBRARY)
+    //deep copy the current deck
+    let currentDeck = filterByLocation(hordeDeck, loxs.LIBRARY)
     let out = []
     let next
 
-    do {
+    do { //pop cards until we find a non-token
       next = currentDeck.pop()
-      console.log("next", next)
       out.push(next)
     } while(next.name.toLowerCase().includes("token"))
 
     let newDeckState = deepCopy(hordeDeck).map(card => {
       if(out.map(item => item.card_id).includes(card.card_id)){
-        console.log("moving to battlefiled")
         card.location = loxs.BATTLEFIELD
       }
       return card
@@ -110,15 +109,32 @@ export const PlayGame = props => {
     setHordeDeck(newDeckState)
   }
 
+  const changeCardById = (card_id, newValue) => {
+    setHordeDeck(changeElementById(card_id, newValue, hordeDeck))
+  }
+
   React.useEffect(() => {
     setHordeDeck(initializeDeck(props.initialDeck, props.allCards, loxs.LIBRARY))
   }, [])
 
   if(hordeDeck){
     return <>
-            <div><button onClick={activateHordeDeck}>Activate Horde</button></div>
-            <Zones locate={zone} handleClick={handleZoneClick} />
-            <div><h2>{activeZone}</h2><CardViewer cards={zone(activeZone)} /></div>
+            <div>
+              <button onClick={activateHordeDeck}>Activate Horde</button>
+            </div>
+            <>
+              <Zones 
+                locate={(loc) => filterByLocation(hordeDeck, loc)} 
+                handleClick={handleZoneClick} 
+              />
+            </>
+            <div>
+              <h2>{activeZone}</h2>
+              <CardViewer 
+                cards={filterByLocation(hordeDeck, activeZone)}
+                changeCardById={changeCardById}
+                />
+            </div>
           </>
   } else {
     return <>Loading Game</>
@@ -141,6 +157,21 @@ const Zones = (props) => {
 // b/g/e/l to send to a different zone
 const Interaction = props => {
   let [over, setOver] = React.useState(false);
+
+  const tappedT = card => {
+    console.log("starting with ", card.tapped)
+
+      if(card.tapped === undefined || card.tapped === false){
+        card.tapped = true
+      } else {
+        card.tapped = false
+      }
+    console.log("changing to ", card.tapped)
+    props.changeCardById(card.card_id, card)
+  }
+
+  const pressedT = useCardKeyTap("t", over, () => tappedT(props.card))
+
   let cardstyle={}
 
   if(over){
@@ -150,18 +181,8 @@ const Interaction = props => {
     cardstyle.backgroundColor='';
   }
 
-  let [tapped, setTapped]= React.useState(false)
-
-  const tappedT = card => {
-    if(card.tapped === null || card.tapped === false){
-      card.tapped = true
-    } else {
-      card.tapped = false
-    }
-    // setHordeCard(card.card_id, )
-  }
-
-  const pressedT = useCardKeyTap("t", over, () => tappedT(props.card))
+  cardstyle.transform = props.card.tapped ? `rotate(45deg)` 
+                                          : `rotate(0deg)`
 
 
 
@@ -203,7 +224,7 @@ const CardViewer = props => {
     }
     return (
       <div className={"in-play"} key={index}>
-        <Interaction card={item}>
+        <Interaction card={item} changeCardById={props.changeCardById}>
           {display}
         </Interaction>
       </div>
