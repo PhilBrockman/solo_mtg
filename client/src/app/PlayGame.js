@@ -15,28 +15,10 @@ export const PlayGame = props => {
   const [hordeDeck, setHordeDeckDirectly] = React.useState(null)
   const [activeZone, setActiveZone] = React.useState(null)
   const [playerLife, setPlayerLife] = React.useState(30)
-  const [cardsInZones, setCardsInZones] = React.useState(null)
-
-  React.useEffect(() => {
-    if(hordeDeck){
-      console.log("reordering")
-      let tmp = {}
-      let hd = prioritize(Utils.deepCopy(hordeDeck))
-      for (const [key, value] of Object.entries(loxs)){
-        const cardsInLocation = Utils.filterByLocation(hd, value)
-        tmp[value] = [...cardsInLocation].map((item,index) =>{
-          item.priority = cardsInLocation.indexOf(item)
-          return item
-        })
-      }
-      console.log(tmp)
-      setCardsInZones(tmp)
-    }
-  }, [hordeDeck])
-
+  const [counter, setCounter] = React.useState(0)
 
   const setHordeDeck = (deck) => {
-    setHordeDeckDirectly(deck)
+    setHordeDeckDirectly(deck.sort((a,b) => a.priority > b.priority ? -1 : 1))
     let tmp = {
       deck: deck,
       playerLife: playerLife
@@ -56,8 +38,8 @@ export const PlayGame = props => {
 
   const activateHordeDeck = event => {
     //deep copy the current deck
+    // let currentDeck = cardsInZones[loxs.LIBRARY]
     let currentDeck = Utils.filterByLocation(hordeDeck, loxs.LIBRARY)
-    let currentBattlefield = Utils.filterByLocation(hordeDeck, loxs.BATTLEFIELD).length
     let out = []
     let next
 
@@ -65,17 +47,27 @@ export const PlayGame = props => {
       next = currentDeck.pop()
       out.push(next)
     } while(next.name.toLowerCase().includes("token"))
-    let counter = out.length;
-    let newDeckState = Utils.deepCopy(hordeDeck).map(card => {
+    
+    let newDeckState = Utils.deepCopy(hordeDeck)
+
+
+    let tmpCounter = counter + out.length
+    newDeckState = newDeckState.map(card => {
+      let tmp = {...card} 
       if(out.map(item => item.card_id).includes(card.card_id)){
-        card.location = loxs.BATTLEFIELD
-        card.priority = currentBattlefield + counter
-        counter -=1
-        console.log("loading with priority:", card.priority)
+        tmp.location = loxs.BATTLEFIELD
+        tmp.priority = tmpCounter
+        tmpCounter--
+        // card.priority = Math.max(Utils.filterByLocation(hordeDeck, 
+        //                   loxs.BATTLEFIELD).map(item => item.priority)) + counter
+        // let res = Utils.filterByLocation(hordeDeck, 
+        //   loxs.BATTLEFIELD).map(item => item.priority)
+        console.log("loading with priority:",  tmpCounter)
       }
-      return card
+      return tmp
     })
 
+    setCounter(tmpCounter + out.length)
     setActiveZone(loxs.BATTLEFIELD)
     setHordeDeck(newDeckState)
   }
@@ -133,7 +125,7 @@ export const PlayGame = props => {
                     />
                   <GC.CardViewer
                     deck={hordeDeck}
-                    cards={prioritize(Utils.filterByLocation(hordeDeck, activeZone))}
+                    cards={Utils.filterByLocation(hordeDeck, activeZone)}
                     changeCardById={changeCardById}
                     />
                 </div>

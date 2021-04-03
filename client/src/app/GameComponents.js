@@ -82,6 +82,7 @@ export const CardViewer = props => {
     return (
       <div className={"in-play"} key={index}>
         <Interaction card={item} changeCardById={props.changeCardById} deck={props.deck}>
+          {item.priority}
           <ScratchArea card={item} changeCardById={props.changeCardById} />
           {display}
         </Interaction>
@@ -103,7 +104,7 @@ export const HordeDeck = props => {
 
   const shuffleButton = "shuffle"
 
-  return <div class="horde-controls">
+  return <div className="horde-controls">
     {drawCard}
     <div>{damages} {shuffleButton}</div>
   </div>
