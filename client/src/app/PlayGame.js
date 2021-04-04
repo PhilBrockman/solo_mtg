@@ -104,10 +104,6 @@ export const PlayGame = props => {
     setHordeDeck(Utils.changeElementById(card_id, newValue, hordeDeck))
   }
 
-  React.useEffect(() => {
-    setHordeDeck(Utils.initializeDeck(props.initialDeck, props.allCards, loxs.LIBRARY))
-  }, [])
-
   if(hordeDeck){
     if(!gameover){
       return  <div className="game-area">
@@ -146,6 +142,7 @@ export const PlayGame = props => {
       return "Game over!"
     }
   } else {
+    setHordeDeck(Utils.initializeDeck(props.initialDeck, props.allCards, loxs.LIBRARY))
     return <>Loading Game</>
   }
 }

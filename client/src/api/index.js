@@ -11,7 +11,6 @@ const api = axios.create({
 })
 
 export const insertPlayingCard = payload => api.post(`/playingCard`, payload).then(res => {
-  console.log("resolved create call", res)
 }).catch(error => {
   console.log("error", error)
 })
@@ -49,7 +48,7 @@ export function useAPI(callback, args) {
     }
 
     callAsynch();    
-  }, [callback]);
+  }, [callback, args]);
 
   return [result, loading];
 }

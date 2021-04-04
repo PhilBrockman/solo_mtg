@@ -1,7 +1,7 @@
 import React from 'react'
 import { useTable } from 'react-table'
 import styled from 'styled-components'
-import api,{useAPI} from '../api'
+import api from '../api'
 import {DisplayCard} from '../components'
 import "./pages.css"
 

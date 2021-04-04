@@ -1,6 +1,6 @@
 import React from 'react'
 import api, {getMTGCardByName} from "../api"
-import {useForm, PlayingCardShard, initialForm} from "../pages/_form.js"
+import {useForm, PlayingCardShard } from "../pages/_form.js"
 import {PlayingCardsUpdate} from "../pages"
 import {DisplayCard} from "../components"
 import { CancelButton } from '../pages/widgets'
@@ -9,21 +9,22 @@ const FetchMTGData = props => {
   const [initialValues, setInitialValues] = React.useState(null)
 
   React.useEffect(() => {
-    getMTGCardByName(props.name).then((res, err )=> {
-      if(err){
-        console.error(err)
-      } else {
-        res = res.filter(card => card.hasOwnProperty("imageUrl"))
+    // if(initialValues)
+      getMTGCardByName(props?.name).then((res, err )=> {
+          if(err){
+            console.error(err)
+          } else {
+            console.log("err")
+            res = res.filter(card => card.hasOwnProperty("imageUrl"))
 
-        if(res.length === 0){
-          console.log("no cards found with name", props.name)
-          setInitialValues({name: props.name, rulesText: '', url: ''})
-        } else {
-          console.log("res", res)
-          setInitialValues({name: props.name, rulesText: res[0].text, url: res[0].imageUrl})
-        }
-      }
-  })}, [props.name])
+            if(res.length === 0){
+              setInitialValues({name: props.name, rulesText: '', url: ''})
+             } else {
+              setInitialValues({name: props.name, rulesText: res[0].text, url: res[0].imageUrl})
+            }
+          }
+      })
+    }, [props.name])
 
   if(initialValues){
     return <PlayingCardsInsert
@@ -40,9 +41,9 @@ const PlayingCardsInsert = props => {
   const {state, submitHandler, changeHandler} = useForm(props.initialValues, values => handleCreatePlayingCard(values));
 
   const handleCreatePlayingCard = async (payload) => {
+    // console.log("creating card", payload)
     await api.insertPlayingCard(payload).then((res,err) => {
-      console.log("inserted ", state.name)
-      props.moreCardsFound(state.name)
+      props.moreCardsFound(api.getAllPlayingCards())
       setHidden(true)
     })
   }
@@ -58,24 +59,27 @@ const PlayingCardsInsert = props => {
             >
             <CancelButton onClick={() => setHidden(true)}>Canel</CancelButton>
         </PlayingCardShard>
-        
       </>
     ); 
   } else {
     handleCreatePlayingCard(props.initialValues)
-    content = <div className={removal_id}>loading {props.initialValues.name}</div> 
+    content = <>loading {props.initialValues.name}</> 
   }
 
   if(hidden){
-    return ""
+    return <div></div>
   } else { 
-    return <div>{content}</div>
+    return <div className={removal_id}>{content}</div>
   }  
 }
 
 export const CardsNotFound = props => {
+  console.log("prosp", props)
   let modified = props.notFound.map(card => {
-    let candidates = props.allCards.filter(card => card?.name === card)
+
+    let candidates = props.allCards.filter(item => item.name === card)
+
+    console.log(card, candidates)
 
     if(candidates.length > 0){
       let lastEl = candidates[candidates.length-1]

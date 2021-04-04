@@ -36,7 +36,7 @@ export const initializeDeck = (initialDeck, allCards, loc) => {
           {
             quantity: cardCount(item),
             info: allCards.filter(
-                    card => cardName(item) == card.name && 
+                    card => cardName(item) === card.name && 
                       (card.rulesText?.length > 0 || 
                         card.url?.length > 0))[0]
           }

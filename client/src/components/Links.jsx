@@ -33,11 +33,6 @@ class Links extends Component {
                                 View all Cards
                             </Link>
                         </Item>
-                        <Item>
-                            <Link to="/playingCards/create" className="nav-link">
-                                + Cards
-                            </Link>
-                        </Item>
                     </List>
                 </Collapse>
             </React.Fragment>

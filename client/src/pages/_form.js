@@ -16,11 +16,7 @@ export const initialForm = {
 
 export const useForm = (initialValues, onSubmit) => {
   const [state, dispatch] = React.useReducer(formReducer, initialValues);
-
-  React.useEffect(() => {
-      console.log('state changed', state)
-  }, [state])
-
+  
   function changeHandler (event) {
     dispatch( {id: event.target.name, value: event.target.value})
   };
@@ -34,12 +30,10 @@ export const useForm = (initialValues, onSubmit) => {
 }
 
 export const PlayingCardShard = props => {
-  console.log("shard", props.state)
   return (
       <Widget.Wrapper>
         <form onSubmit={props.submitHandler}>
           { Object.keys(initialForm).map((key) => {
-              console.log("key:", key)
               if(initialForm.hasOwnProperty(key)){
                 return(
                   <div key={key}>

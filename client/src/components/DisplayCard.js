@@ -1,9 +1,9 @@
 import React from 'react'
-import api, { useAPI, getMTGCardByName } from "../api";
+import api, { getMTGCardByName } from "../api";
 import "./playingCardDisplay.css"
 
 const DisplayMTGCard = props => {
-  return <img className="list-display" src={props.src} />
+  return <img className="list-display" src={props.src} alt={props.altText} />
 }
 
 const ImageFetcher = props => {
@@ -16,7 +16,7 @@ const ImageFetcher = props => {
       console.log("saved image to db", props.payload.url)
     })
   })
-  return <DisplayMTGCard src={props.payload.url} />
+  return <DisplayMTGCard src={props.payload.url} altText={"Image for " + props.payload.name}/>
 }
 
 export const DisplayCard = props => {

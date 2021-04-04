@@ -1,4 +1,9 @@
-export const startingDeck = `1 Yixlid Jailer
+export const startingDeck = `2 Endless Ranks of the Dead
+1 Forsaken Wastes
+5 Zombie Giant Tokens`
+
+
+const foo = `1 Yixlid Jailer
 2 Vengeful Dead
 4 Cackling Fiend
 2 Infectious Horror

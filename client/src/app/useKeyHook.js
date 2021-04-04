@@ -12,7 +12,7 @@ export default function useCardKeyTap(targetKeys, condition, callback) {
     return () => {
       window.removeEventListener('keydown', downHandler);
     };
-  }, [targetKeys, callback]);
+  }, [targetKeys, callback, condition]);
 
   return null;
 }

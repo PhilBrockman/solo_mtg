@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import api,{useAPI} from '../api'
+import api from '../api'
 
 export const EditCardAttributeInPlace = (props) =>{
   const attr = props.attr

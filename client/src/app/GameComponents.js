@@ -1,5 +1,4 @@
 import React from 'react'
-import { card } from "mtgsdk";
 import useCardKeyTap from "./useKeyHook.js"
 import {loxs} from "./utils.js"
 import * as Utils from "./utils.js"
@@ -9,8 +8,8 @@ import * as Utils from "./utils.js"
 // b/g/e/l to send to a different zone
 export const Interaction = props => {
   const [over, setOver] = React.useState(false);
-  const pressedTap = useCardKeyTap(["t"], over, () => tappedT(props.card))
-  const pressedZone = useCardKeyTap(Object.values(loxs), over, (loc) => setZone(props.card, loc, props.deck))
+  useCardKeyTap(["t"], over, () => tappedT(props.card))
+  useCardKeyTap(Object.values(loxs), over, (loc) => setZone(props.card, loc, props.deck))
 
   const updateCard = card => {
     props.changeCardById(card.card_id, card)
@@ -76,7 +75,8 @@ export const CardViewer = props => {
   let output = props.cards.map((item, index) => {
     let display;
     if(item.url?.length > 0){
-      display=<img src={item.url} />
+      display=<img src={item.url} 
+                  alt={item.rulesText}/>
     } else {
       display = <>
                   <div className="name">{item.name}</div>
