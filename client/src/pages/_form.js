@@ -58,6 +58,7 @@ export const PlayingCardShard = props => {
             })
           }
           <Widget.Button>Submit</Widget.Button>
+          {props.children}
         </form>
       </Widget.Wrapper>
     );

@@ -9,6 +9,18 @@ import {Game} from "./Game.jsx"
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 
+
+import api, { useAPI, getMTGCardByName } from "../api";
+
+
+getMTGCardByName("mox emerald").then(res =>
+    console.log(res))
+
+getMTGCardByName("nissa's triumph").then(res =>
+console.log(res))
+
+
+
 function App() {
     return (
         <Router>
@@ -23,6 +35,7 @@ function App() {
                     component={PlayingCardsUpdate}
                 />
             </Switch>
+            ouei 
         </Router>
     )
 }

@@ -3,6 +3,7 @@ import api, {getMTGCardByName} from "../api"
 import {useForm, PlayingCardShard, initialForm} from "../pages/_form.js"
 import {PlayingCardsUpdate} from "../pages"
 import {DisplayCard} from "../components"
+import { CancelButton } from '../pages/widgets'
 
 const FetchMTGData = props => {
   const [initialValues, setInitialValues] = React.useState(null)
@@ -54,7 +55,10 @@ const PlayingCardsInsert = props => {
             state={state}
             submitHandler={submitHandler}
             changeHandler={changeHandler}
-            />
+            >
+            <CancelButton onClick={() => setHidden(true)}>Canel</CancelButton>
+        </PlayingCardShard>
+        
       </>
     ); 
   } else {

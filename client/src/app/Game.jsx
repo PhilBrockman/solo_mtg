@@ -6,12 +6,14 @@ import "./game.css"
 import {PlayGame} from "./PlayGame.js"
 import {cardName} from "./utils.js"
 
+console.log("game ")
+
 export const Game = (props) => {
   let [cards, loading] = useAPI(api.getAllPlayingCards)
   let [deck, setDeck] = React.useState(startingDeck)
   let [readiedUp, setReadiedUp] = React.useState(false)
 
-  let [availableCards, setAvailableCards] = React.useState(useAPI(cards))
+  let [availableCards, setAvailableCards] = React.useState([])
 
   const moreCardsFound = () => {
     api.getAllPlayingCards().then(res => {
