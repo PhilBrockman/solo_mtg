@@ -5,7 +5,7 @@ import {loxs} from "./utils.js"
 import * as GC from "./GameComponents.js"
 
 const prioritize = o => {
-  return o.sort((a, b) => (a.priority < b.priority) ? -1 : 1)
+  return Utils.deepCopy(o).sort((a, b) => (a.priority < b.priority) ? -1 : 1)
 }
 
 export const PlayGame = props => {
@@ -18,9 +18,10 @@ export const PlayGame = props => {
   const [counter, setCounter] = React.useState(0)
 
   const setHordeDeck = (deck) => {
-    setHordeDeckDirectly(deck.sort((a,b) => a.priority > b.priority ? -1 : 1))
+    const newDeck = prioritize(deck)
+    setHordeDeckDirectly(newDeck)
     let tmp = {
-      deck: deck,
+      deck: newDeck,
       playerLife: playerLife
     }
     setHistory([...history, tmp])
@@ -50,7 +51,6 @@ export const PlayGame = props => {
     
     let newDeckState = Utils.deepCopy(hordeDeck)
 
-
     let tmpCounter = counter + out.length
     newDeckState = newDeckState.map(card => {
       let tmp = {...card} 
@@ -58,11 +58,6 @@ export const PlayGame = props => {
         tmp.location = loxs.BATTLEFIELD
         tmp.priority = tmpCounter
         tmpCounter--
-        // card.priority = Math.max(Utils.filterByLocation(hordeDeck, 
-        //                   loxs.BATTLEFIELD).map(item => item.priority)) + counter
-        // let res = Utils.filterByLocation(hordeDeck, 
-        //   loxs.BATTLEFIELD).map(item => item.priority)
-        console.log("loading with priority:",  tmpCounter)
       }
       return tmp
     })
@@ -70,6 +65,24 @@ export const PlayGame = props => {
     setCounter(tmpCounter + out.length)
     setActiveZone(loxs.BATTLEFIELD)
     setHordeDeck(newDeckState)
+  }
+
+  const shuffleHordeDeck = () => {
+    let p = Utils.filterByLocation(hordeDeck, loxs.LIBRARY).map(card => card.card_id)
+    console.log("p lengeth", p.length)
+    let priorities = [...Array(p.length).keys()]
+    let newDeck = Utils.deepCopy(hordeDeck).map(card => {
+      if(p.includes(card.card_id)){
+        let tmp = {...card}
+        tmp.priority = priorities.splice(Math.floor(Math.random()*priorities.length), 1)[0];
+        return tmp
+      } else {
+        console.log(card)
+        return card
+      }
+    })
+    console.log("new deck",newDeck)
+    setHordeDeck(newDeck)
   }
 
   const burn = cards => {
@@ -88,6 +101,7 @@ export const PlayGame = props => {
         return card
       }
     })
+    newState = prioritize(newState)
     setHordeDeck(newState)
   }
 
@@ -105,14 +119,17 @@ export const PlayGame = props => {
                 <div className="zones-changes">
                   <div className="controls">
                     <GC.HordeDeck
+                      shuffleDeck={shuffleHordeDeck}
                       activateHordeDeck={activateHordeDeck}
                       burn={burn}
                     />
+                    
                     <GC.PlayerControls
                       playerLife={playerLife}
                       setPlayerLife={setPlayerLife}
                     />
                   </div>
+                  <div> {JSON.stringify(Utils.filterByLocation(hordeDeck, loxs.LIBRARY).map(item => item.priority))}</div>
                   <Utils.Zones
                     locate={(loc) => Utils.filterByLocation(hordeDeck, loc)}
                     handleClick={handleZoneClick}

@@ -22,8 +22,12 @@ export const Interaction = props => {
   }
 
   const setZone = (card, loc, deck) => {
+    console.log("setting Zone")
     if(card.location !== loc){
       card.location = loc
+      card.priority = Utils.filterByLocation(props.deck, loxs.LIBRARY).length+1
+
+      // console.log("max after zone move", (Utils.filterByLocation(props.deck, loxs.LIBRARY).filter(item => Number.isInteger(item.priority)).map(item=>item.priority)))
       updateCard(card)
     }
   }
@@ -91,7 +95,7 @@ export const CardViewer = props => {
   })
 
   return <div className="battlefield">
-          {output}
+          {output.reverse()}
           </div>
 }
 
@@ -102,7 +106,7 @@ export const HordeDeck = props => {
     return <button key={damage} onClick={() => props.burn(damage)}>{damage}</button>
   })
 
-  const shuffleButton = "shuffle"
+  const shuffleButton = <button onClick={() => props.shuffleDeck()}>Shuffle</button>
 
   return <div className="horde-controls">
     {drawCard}
