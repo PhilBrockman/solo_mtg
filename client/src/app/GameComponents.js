@@ -25,9 +25,9 @@ export const Interaction = props => {
     console.log("setting Zone")
     if(card.location !== loc){
       card.location = loc
-      card.priority = Utils.filterByLocation(props.deck, loxs.LIBRARY).length+1
-
-      // console.log("max after zone move", (Utils.filterByLocation(props.deck, loxs.LIBRARY).filter(item => Number.isInteger(item.priority)).map(item=>item.priority)))
+      let mapping = Utils.filterByLocation(props.deck, loc).map(item => item.priority).filter(item => Number.isInteger(item))
+      card.priority = mapping.length > 0 ? Math.max(...mapping)+1 : 1;
+      console.log("new prioriryt", (card.priority))
       updateCard(card)
     }
   }
