@@ -26,7 +26,6 @@ const FetchMTGData = props => {
 
   if(initialValues){
     return <PlayingCardsInsert
-              moreCardsFound={props.moreCardsFound}
               initialValues={initialValues}/>
   } else {
     console.log("gathering magicks")
@@ -41,8 +40,6 @@ const PlayingCardsInsert = props => {
 
   const handleCreatePlayingCard = async (payload) => {
     await api.insertPlayingCard(payload).then((res,err) => {
-      console.log("inserted ", state.name)
-      props.moreCardsFound(state.name)
       setHidden(true)
     })
   }
@@ -72,7 +69,7 @@ const PlayingCardsInsert = props => {
 
 export const CardsNotFound = props => {
   let modified = props.notFound.map(card => {
-    let candidates = props.allCards.filter(card => card?.name === card)
+    let candidates = props.allCards.filter(allCards => allCards.name === card)
 
     if(candidates.length > 0){
       let lastEl = candidates[candidates.length-1]
@@ -84,8 +81,7 @@ export const CardsNotFound = props => {
                 />
               </>)
     } else {
-      return <FetchMTGData moreCardsFound={props.moreCardsFound} 
-                    key={card} name={card}/>
+      return <FetchMTGData key={card} name={card}/>
     }
   })
 

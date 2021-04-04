@@ -38,6 +38,8 @@ export const PlayGame = props => {
   }
 
   const activateHordeDeck = event => {
+    //deep copy the current deck
+    // let currentDeck = cardsInZones[loxs.LIBRARY]
     let currentDeck = Utils.filterByLocation(hordeDeck, loxs.LIBRARY)
     let out = []
     let next
