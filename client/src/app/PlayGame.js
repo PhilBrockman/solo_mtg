@@ -67,20 +67,17 @@ export const PlayGame = props => {
 
   const shuffleHordeDeck = () => {
     let p = Utils.filterByLocation(hordeDeck, loxs.LIBRARY).map(card => card.card_id)
-    console.log("p lengeth", p.length)
     let priorities = [...Array(p.length).keys()]
-    let newDeck = Utils.deepCopy(hordeDeck).map(card => {
+
+    setHordeDeck(Utils.deepCopy(hordeDeck).map(card => {
       if(p.includes(card.card_id)){
         let tmp = {...card}
         tmp.priority = priorities.splice(Math.floor(Math.random()*priorities.length), 1)[0];
         return tmp
       } else {
-        console.log(card)
         return card
       }
-    })
-    console.log("new deck",newDeck)
-    setHordeDeck(newDeck)
+    }))
   }
 
   const burn = cards => {

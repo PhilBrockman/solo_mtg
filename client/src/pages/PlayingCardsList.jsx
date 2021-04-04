@@ -11,13 +11,18 @@ const PlayingCardsList = () => {
     const [playingCards, loading] = useAPI(api.getAllPlayingCards)
 
    if(loading === false){
-        return (
-            <Wrapper>
-                <DeckTable
-                    data={playingCards}
-                    />
-            </Wrapper>
-            )
+       if(playingCards.length > 0){
+            return (
+                <Wrapper>
+                    <DeckTable
+                        data={playingCards}
+                        />
+                </Wrapper>
+                )
+            }
+        else {
+            return "No cards found."
+        }
     } else {
         return (
             <>Loading...</>

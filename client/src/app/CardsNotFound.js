@@ -29,8 +29,7 @@ const FetchMTGData = props => {
               moreCardsFound={props.moreCardsFound}
               initialValues={initialValues}/>
   } else {
-    console.log("gathering magicks")
-    return <>gathering... {props.name}</>
+    return <></>
   }
 }
 
