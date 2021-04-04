@@ -46,6 +46,9 @@ export const initializeDeck = (initialDeck, allCards, loc) => {
     for (let cards in tmp) {
       let card = tmp[cards]
       for (let i=0; i<card.quantity; i++) {
+        if(!card.info){
+          card.info = {}
+        }
         card.info.location = loc
         card.info.card_id = deck.length
         deck.push({...card.info});

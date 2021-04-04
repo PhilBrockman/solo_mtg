@@ -11,25 +11,29 @@ export const Game = (props) => {
   let [deck, setDeck] = React.useState(startingDeck)
   let [readiedUp, setReadiedUp] = React.useState(false)
 
-  const [availableCards, setAvailableCards] = React.useState([])
+  const [availableCards, setAvailableCards] = React.useState(null)
 
-  const moreCardsFound = (cards) => {
-    let active = true
-    cards.then((res, err) => {
+  React.useEffect(() => {
+    moreCardsFound()
+  }, [cards])
+
+  const moreCardsFound = () => {
+    let currentThread = true
+    api.getAllPlayingCards().then((res, err) => {
+      
       if(err){
-        console.log("error updating cards", err)
+        // there's a server error higher up is my guess
+        console.error("err", err)
       } else {
-        if(active){
-          // setAvailableCards(
-          //   res.data.data
-          // );
+        if(currentThread){
+          setAvailableCards(res.data.data)
         }
       }
     })
-    return () => active = false
+    return () => currentThread = false
   }
 
-  const handleChange = event => {
+  const handleDeckChange = event => {
     setDeck(event.target.value)
   }
 
@@ -37,38 +41,61 @@ export const Game = (props) => {
     setReadiedUp(completedDeck)
   }
 
+  let content 
   if(loading === false){
     if(readiedUp){
-      return <PlayGame 
+      content = <PlayGame
                 initialDeck={readiedUp}
                 allCards={cards}
                 />
     } else {
       if(availableCards){
-        let validStoredCards = availableCards.filter(card => card?.url?.length > 0 || card?.rulesText?.length > 0)
-
-        let requestedCards = deck.split("\n").map(card => cardName(card))
-        let found = deck.split("\n").filter(requested => validStoredCards.map(card => card.name).includes(requested.split(" ").splice(1).join(" ")))
-        
-        let totalCards = found.length > 0 ? found.map(card => parseInt(card.split(" ")[0])).reduce((a, b) => a + b)
-                                            : 0;
-
-        let notFound = requestedCards.filter(card => !validStoredCards.map(card => card.name).includes(card))
-        
-        return  <>
-                  <textarea value={deck} onChange={handleChange}/>
-                  <div><button onClick={(event) => startGame(found)}>Load {totalCards} cards</button></div>
-                  <>{<CardsNotFound moreCardsFound={moreCardsFound} allCards={availableCards} notFound={notFound} />} </>
-                </>
+        console.log('availableCards', availableCards)
+        content = <>
+                    <CardLoader cards={availableCards}
+                    deck={deck} handleChange={handleDeckChange} 
+                    startGame={startGame}
+                    moreCardsFound={moreCardsFound} />
+                  </>
       } else {
-        return <>waiting for cards </>
+          content = <>waiting for cards </>
       }
     }
+
   } else {
-    return (
+    content = (
       <>
         Loading... (Game.jsx)
       </>
     )
   }
+  return <>
+    <DeckArea deck={deck} handleChange={handleDeckChange} />
+    {content}
+    </>
+}
+
+const DeckArea = props => {
+  return <textarea value={props.deck} onChange={props.handleChange}/>
+}
+
+const CardLoader = props => {
+  const availableCards = props.cards
+  const deck = props.deck 
+
+  let validStoredCards = availableCards.filter(card => card?.url?.length > 0 || card?.rulesText?.length > 0)
+
+  let requestedCards = deck.split("\n").map(card => cardName(card))
+  let found = deck.split("\n").filter(requested => validStoredCards.map(card => card.name).includes(requested.split(" ").splice(1).join(" ")))
+
+  let totalCards = found.length > 0 ? found.map(card => parseInt(card.split(" ")[0])).reduce((a, b) => a + b)
+                                      : 0;
+
+  let notFound = requestedCards.filter(card => !validStoredCards.map(card => card.name).includes(card))
+
+  return  <>
+            {totalCards} found
+            <>{<CardsNotFound moreCardsFound={props.moreCardsFound} allCards={availableCards} notFound={notFound} />} </>
+            <div><button onClick={(event) => props.startGame(found)}>Start</button></div>
+          </>
 }

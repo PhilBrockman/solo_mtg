@@ -74,12 +74,9 @@ const PlayingCardsInsert = props => {
 }
 
 export const CardsNotFound = props => {
-  console.log("prosp", props)
   let modified = props.notFound.map(card => {
 
     let candidates = props.allCards.filter(item => item.name === card)
-
-    console.log(card, candidates)
 
     if(candidates.length > 0){
       let lastEl = candidates[candidates.length-1]
