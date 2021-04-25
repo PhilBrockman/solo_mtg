@@ -3,11 +3,9 @@ const Schema = mongoose.Schema
 
 const PlayingCard = new Schema(
     {
-        name: { type: String, required: true },
-        quantity: { type: Number, required: true },
+        name: { type: String, required: true, unique: true },
         rulesText: { type: String },
-        url: { type: String },
-        img: { type: String }
+        url: {type: String}
     },
     { timestamps: true },
 )

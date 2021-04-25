@@ -1,0 +1,53 @@
+.game-area {
+  display: flex;
+  flex-direction: column;
+}
+
+.zones-changes {
+  display: flex;
+  background-color: red;
+  flex-direction: row;
+}
+
+.history {
+  background-color: yellowgreen;
+  min-width: 150px;
+}
+
+.board-state {
+  display: flex;
+  flex-direction: row;
+}
+
+.horde-controls {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+}
+
+.zoom {
+  transition: transform .2s; /* Animation */
+  margin: 0 auto;
+}
+
+.zoom:hover {
+  transform: scale(1.5); /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
+}
+
+.battlefield {
+  flex-grow: 1;
+  display:flex;
+  flex-wrap:wrap;
+  flex-direction: row;
+  background-color: purple;
+  align-content: flex-start;
+}
+
+.in-play, .in-play img{
+  max-width:143px;
+  max-height:310px;
+}
+
+.floating {
+  position: absolute;
+}

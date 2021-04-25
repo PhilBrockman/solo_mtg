@@ -11,6 +11,7 @@ createPlayingCard = (req, res) => {
         })
     }
 
+
     const playingCard = new PlayingCard(body)
 
     if (!playingCard) {
@@ -27,9 +28,10 @@ createPlayingCard = (req, res) => {
             })
         })
         .catch(error => {
-            return res.status(400).json({
+            console.log("error", error)
+            return res.status(200).json({
                 error,
-                message: 'Playing Card not created!',
+                message: 'Playing Card not created due to server issue.',
             })
         })
 }
@@ -52,8 +54,10 @@ updatePlayingCard = async (req, res) => {
             })
         }
         playingCard.name = body.name
-        playingCard.time = body.time
-        playingCard.rating = body.rating
+        playingCard.rulesText = body.rulesText
+        playingCard.url = body.url
+        playingCard.token = body.token
+
         playingCard
             .save()
             .then(() => {
@@ -107,11 +111,6 @@ getPlayingCards = async (req, res) => {
     await PlayingCard.find({}, (err, playingCards) => {
         if (err) {
             return res.status(400).json({ success: false, error: err })
-        }
-        if (!playingCards.length) {
-            return res
-                .status(404)
-                .json({ success: false, error: `Playing Card not found` })
         }
         return res.status(200).json({ success: true, data: playingCards })
     }).catch(err => console.log(err))
